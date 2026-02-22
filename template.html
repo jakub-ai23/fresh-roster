@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRESH 26 — Training Plan Template</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+  :root {
+    --purple: #4a148c;
+    --brand-blue: #00B4E3;
+    --brand-lila: #D856B0;
+    --dark: #1a1a2e;
+    --green: #4ac29a;
+    --orange: #FF9800;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Montserrat', sans-serif; background: #f3f4f6; color: #333; }
+
+  /* Header */
+  .hero { background: linear-gradient(135deg, #1a1a2e 0%, #4a148c 100%); padding: 24px 20px; text-align: center; }
+  .hero img { height: 50px; margin-bottom: 8px; }
+  .hero h1 { color: white; font-size: 1.4rem; font-weight: 800; text-transform: uppercase; }
+  .hero .sub { color: rgba(255,255,255,0.6); font-size: 0.75rem; margin-top: 4px; }
+
+  /* Container */
+  .container { max-width: 1000px; margin: 0 auto; padding: 16px; }
+
+  /* Meta bar */
+  .meta-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .meta-field { background: white; border-radius: 8px; padding: 10px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .meta-field label { display: block; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: #999; font-weight: 700; margin-bottom: 4px; }
+  .meta-field select, .meta-field input {
+    width: 100%; border: none; font-family: inherit; font-size: 0.85rem; font-weight: 600;
+    color: var(--purple); background: transparent; outline: none;
+  }
+  .meta-field select { cursor: pointer; }
+  .meta-row2 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+
+  /* Topic */
+  .topic-bar { background: white; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .topic-bar label { display: block; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: #999; font-weight: 700; margin-bottom: 4px; }
+  .topic-bar input { width: 100%; border: none; font-family: inherit; font-size: 1rem; font-weight: 700; color: var(--purple); outline: none; }
+
+  /* Section blocks */
+  .section-block { background: white; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+  .section-header { padding: 10px 16px; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: white; display: flex; justify-content: space-between; align-items: center; }
+  .section-header.intro { background: var(--brand-blue); }
+  .section-header.main1 { background: var(--purple); }
+  .section-header.main2 { background: var(--brand-lila); }
+  .section-header.final { background: var(--green); }
+  .section-header .time-input {
+    background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white;
+    font-family: inherit; font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 4px;
+    width: 70px; text-align: center; outline: none;
+  }
+  .section-header .time-input::placeholder { color: rgba(255,255,255,0.5); }
+
+  /* Drill rows */
+  .drill-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border-bottom: 1px solid #f0f0f0; }
+  .drill-row:last-child { border-bottom: none; }
+  .drill-cell { padding: 10px 14px; border-right: 1px solid #f0f0f0; min-height: 80px; }
+  .drill-cell:last-child { border-right: none; }
+  .drill-cell label { display: block; font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.8px; color: #bbb; font-weight: 700; margin-bottom: 4px; }
+  .drill-cell textarea {
+    width: 100%; border: none; font-family: inherit; font-size: 0.8rem; color: #333;
+    outline: none; resize: none; line-height: 1.5; min-height: 60px; background: transparent;
+  }
+  .drill-cell textarea::placeholder { color: #ccc; }
+  .drill-cell textarea:focus { background: #faf8ff; border-radius: 4px; }
+
+  /* Add drill button */
+  .add-drill { display: block; width: 100%; padding: 8px; background: none; border: none; border-top: 1px dashed #e0e0e0;
+    color: #bbb; font-family: inherit; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+  .add-drill:hover { background: #faf8ff; color: var(--purple); }
+
+  /* Remove drill */
+  .drill-row { position: relative; }
+  .remove-drill { position: absolute; right: 4px; top: 4px; background: none; border: none; color: #ddd; cursor: pointer; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }
+  .remove-drill:hover { color: #e53935; background: #fff5f5; }
+
+  /* Coaching tips */
+  .tips-row { background: #fff8e1; padding: 10px 14px; border-top: 1px solid #f0f0f0; }
+  .tips-row label { display: block; font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--orange); font-weight: 700; margin-bottom: 4px; }
+  .tips-row textarea {
+    width: 100%; border: none; font-family: inherit; font-size: 0.78rem; color: #333;
+    outline: none; resize: none; line-height: 1.5; min-height: 40px; background: transparent;
+  }
+
+  /* Toolbar */
+  .toolbar { display: flex; gap: 8px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+  .toolbar button { background: var(--purple); color: white; border: none; border-radius: 6px; padding: 10px 18px;
+    font-size: 0.75rem; cursor: pointer; font-family: inherit; font-weight: 700; transition: opacity 0.15s; }
+  .toolbar button:hover { opacity: 0.85; }
+  .toolbar button.secondary { background: #e0e0e0; color: #555; }
+  .toolbar button.secondary:hover { background: #d0d0d0; }
+
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--purple); color: white;
+    padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 99; }
+  .toast.show { opacity: 1; }
+
+  .note { background: #f0e6ff; border-left: 3px solid var(--purple); padding: 8px 12px; font-size: 0.75rem; margin-bottom: 16px; border-radius: 0 6px 6px 0; color: #555; }
+
+  /* Print */
+  @media print {
+    .toolbar, .add-drill, .remove-drill, .note { display: none; }
+    body { background: white; }
+    .section-block { break-inside: avoid; }
+    textarea { border: none !important; }
+  }
+
+  /* Auto-resize textareas */
+  textarea { overflow: hidden; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img src="images/Logo_FR_white2.png" alt="FRESH Roundnet">
+  <h1>Training Plan</h1>
+  <div class="sub">FRESH 26 — Mallorca Training Camp 2026</div>
+</div>
+
+<div class="container">
+
+  <div class="note">
+    Click any field to edit. Your plan auto-saves to your browser. Use "Export" to copy or "Print" for a clean PDF.
+  </div>
+
+  <!-- Meta -->
+  <div class="meta-bar">
+    <div class="meta-field">
+      <label>Coach</label>
+      <input type="text" id="coach" placeholder="Your name">
+    </div>
+    <div class="meta-field">
+      <label>Session</label>
+      <select id="session">
+        <option value="">— Select session —</option>
+        <option value="mon-pm">Mon 9 Mar · 14:30–16:30 · Training</option>
+        <option value="tue-am">Tue 10 Mar · 09:30–12:30 · Training</option>
+        <option value="tue-pm">Tue 10 Mar · 14:30–16:30 · Clinic</option>
+        <option value="wed-am">Wed 11 Mar · 09:30–12:30 · Training</option>
+        <option value="thu-am">Thu 12 Mar · 09:30–12:30 · Training</option>
+        <option value="thu-pm">Thu 12 Mar · 14:30–16:30 · Clinic</option>
+        <option value="fri-am">Fri 13 Mar · 09:30–12:30 · Training</option>
+      </select>
+    </div>
+    <div class="meta-field">
+      <label>Group</label>
+      <select id="group">
+        <option value="">— Select group —</option>
+        <option value="g1">Group 1 — Pro (Paq)</option>
+        <option value="g2">Group 2 — Pro/High Contender (Pascal)</option>
+        <option value="g3">Group 3 — Contender (Umut)</option>
+        <option value="g4">Group 4 — Contender/Intermediate (Cedric + Jonas)</option>
+        <option value="all">All Groups (Clinic)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="meta-row2">
+    <div class="meta-field">
+      <label>Number of Players</label>
+      <input type="text" id="players" placeholder="e.g. 12">
+    </div>
+    <div class="meta-field">
+      <label>Target Level</label>
+      <input type="text" id="level" placeholder="e.g. Advanced / Pro">
+    </div>
+    <div class="meta-field">
+      <label>Total Duration</label>
+      <input type="text" id="duration" placeholder="e.g. 120 min">
+    </div>
+    <div class="meta-field">
+      <label>Equipment Needed</label>
+      <input type="text" id="equipment" placeholder="e.g. 6 sets, 12 balls, cones">
+    </div>
+  </div>
+
+  <div class="topic-bar">
+    <label>Session Topic</label>
+    <input type="text" id="topic" placeholder="e.g. Setting under athletic pressure">
+  </div>
+
+  <!-- Sections -->
+  <div id="sections"></div>
+
+  <div class="toolbar">
+    <button onclick="savePlan()">Save</button>
+    <button onclick="exportPlan()">Export Text</button>
+    <button onclick="window.print()">Print / PDF</button>
+    <button onclick="exportForAI()">Copy Template for ChatGPT</button>
+    <button class="secondary" onclick="resetPlan()">Reset</button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// Session topic suggestions
+const topicSuggestions = {
+  'mon-pm': 'Setting, Social Play',
+  'tue-am': 'Serving, Serve Receive',
+  'tue-pm': 'Hitting, Serving (Clinic)',
+  'wed-am': 'Hitting, Setting',
+  'thu-am': 'Defense',
+  'thu-pm': 'Hitting, Serving (Clinic)',
+  'fri-am': 'Setting',
+};
+
+const sessionDurations = {
+  'mon-pm': '120 min',
+  'tue-am': '180 min',
+  'tue-pm': '120 min',
+  'wed-am': '180 min',
+  'thu-am': '180 min',
+  'thu-pm': '120 min',
+  'fri-am': '180 min',
+};
+
+document.getElementById('session').addEventListener('change', function() {
+  const v = this.value;
+  if (topicSuggestions[v] && !document.getElementById('topic').value) {
+    document.getElementById('topic').value = topicSuggestions[v];
+  }
+  if (sessionDurations[v] && !document.getElementById('duration').value) {
+    document.getElementById('duration').value = sessionDurations[v];
+  }
+  autoSave();
+});
+
+// Section definitions
+const sectionDefs = [
+  { id: 'intro', label: 'Introduction / Warm-up', cls: 'intro', defaultTime: '25 min',
+    placeholder: { activity: 'e.g. Welcome, team lap + stretching, ball coordination warm-up', goals: 'e.g. Cardiovascular activation, prevent injuries, get to know each other', tips: 'e.g. Every player needs a ball. Use music to set the energy.' }},
+  { id: 'main1', label: 'Main Part I — Drilling', cls: 'main1', defaultTime: '25 min',
+    placeholder: { activity: 'e.g. Describe the drill: setup, rotation, progressions, variations', goals: 'e.g. Focus on technique (hand contact, positioning, follow through)', tips: 'e.g. Correct easier mistakes first — one at a time. Use 4As: Action, Analyse, Answer, Adapt.' }},
+  { id: 'main2', label: 'Main Part II — Advanced Drilling', cls: 'main2', defaultTime: '25 min',
+    placeholder: { activity: 'e.g. Full rotation drill: first touch → set → attack. Describe progressions.', goals: 'e.g. Reaction and technical practice under pressure. Communication is key!', tips: 'e.g. Be strict on correct footwork and positioning. Focus on rhythm before speed.' }},
+  { id: 'final', label: 'Game Forms / Cool Down', cls: 'final', defaultTime: '25 min',
+    placeholder: { activity: 'e.g. 2v2 games to 15. Modified scoring: push = 2pts. Switch teams every game.', goals: 'e.g. Apply session skills in game context. Observe and correct.', tips: 'e.g. Track individual setting errors — winner at the end. Cool down with partner analysis.' }},
+];
+
+function buildSections() {
+  const container = document.getElementById('sections');
+  container.innerHTML = '';
+
+  sectionDefs.forEach(s => {
+    const block = document.createElement('div');
+    block.className = 'section-block';
+    block.dataset.section = s.id;
+
+    block.innerHTML = `
+      <div class="section-header ${s.cls}">
+        <span>${s.label}</span>
+        <input class="time-input" type="text" placeholder="min" value="${s.defaultTime}" data-field="time">
+      </div>
+      <div class="drills" data-section="${s.id}">
+        <div class="drill-row">
+          <div class="drill-cell">
+            <label>Activity / Description</label>
+            <textarea placeholder="${s.placeholder.activity}" data-field="activity" rows="3"></textarea>
+          </div>
+          <div class="drill-cell">
+            <label>Goals / Focus Points</label>
+            <textarea placeholder="${s.placeholder.goals}" data-field="goals" rows="3"></textarea>
+          </div>
+          <div class="drill-cell">
+            <label>Organization / Equipment</label>
+            <textarea placeholder="${s.placeholder.tips}" data-field="equipment" rows="3"></textarea>
+          </div>
+          <button class="remove-drill" title="Remove">&times;</button>
+        </div>
+      </div>
+      <button class="add-drill" data-section="${s.id}">+ Add another drill / activity</button>
+      <div class="tips-row">
+        <label>Coaching Notes (private — won't show in print)</label>
+        <textarea placeholder="Reminders, things to watch for, backup plan..." data-field="notes" rows="2"></textarea>
+      </div>
+    `;
+    container.appendChild(block);
+  });
+
+  // Add drill buttons
+  document.querySelectorAll('.add-drill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sec = btn.dataset.section;
+      const drillsContainer = document.querySelector(`.drills[data-section="${sec}"]`);
+      const def = sectionDefs.find(s => s.id === sec);
+      const row = document.createElement('div');
+      row.className = 'drill-row';
+      row.innerHTML = `
+        <div class="drill-cell">
+          <label>Activity / Description</label>
+          <textarea placeholder="Describe the drill..." data-field="activity" rows="3"></textarea>
+        </div>
+        <div class="drill-cell">
+          <label>Goals / Focus Points</label>
+          <textarea placeholder="What should players learn?" data-field="goals" rows="3"></textarea>
+        </div>
+        <div class="drill-cell">
+          <label>Organization / Equipment</label>
+          <textarea placeholder="Sets, balls, cones, groupings..." data-field="equipment" rows="3"></textarea>
+        </div>
+        <button class="remove-drill" title="Remove">&times;</button>
+      `;
+      drillsContainer.appendChild(row);
+      bindRemoveButtons();
+      bindAutoResize();
+      autoSave();
+    });
+  });
+
+  bindRemoveButtons();
+  bindAutoResize();
+}
+
+function bindRemoveButtons() {
+  document.querySelectorAll('.remove-drill').forEach(btn => {
+    btn.onclick = () => {
+      const drills = btn.closest('.drills');
+      if (drills.querySelectorAll('.drill-row').length > 1) {
+        btn.closest('.drill-row').remove();
+        autoSave();
+      }
+    };
+  });
+}
+
+function bindAutoResize() {
+  document.querySelectorAll('textarea').forEach(ta => {
+    ta.removeEventListener('input', autoResizeHandler);
+    ta.addEventListener('input', autoResizeHandler);
+    autoResizeEl(ta);
+  });
+}
+
+function autoResizeHandler() { autoResizeEl(this); autoSave(); }
+function autoResizeEl(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+
+// Auto-save
+let saveTimer;
+function autoSave() { clearTimeout(saveTimer); saveTimer = setTimeout(savePlan, 1000); }
+
+document.querySelectorAll('input, select').forEach(el => {
+  el.addEventListener('change', autoSave);
+  el.addEventListener('input', autoSave);
+});
+
+function getPlanData() {
+  const data = {
+    coach: document.getElementById('coach').value,
+    session: document.getElementById('session').value,
+    group: document.getElementById('group').value,
+    players: document.getElementById('players').value,
+    level: document.getElementById('level').value,
+    duration: document.getElementById('duration').value,
+    equipment: document.getElementById('equipment').value,
+    topic: document.getElementById('topic').value,
+    sections: {}
+  };
+
+  sectionDefs.forEach(s => {
+    const block = document.querySelector(`.section-block[data-section="${s.id}"]`);
+    const timeInput = block.querySelector('.time-input');
+    const notes = block.querySelector('.tips-row textarea');
+    const drills = [];
+    block.querySelectorAll('.drill-row').forEach(row => {
+      drills.push({
+        activity: row.querySelector('[data-field="activity"]').value,
+        goals: row.querySelector('[data-field="goals"]').value,
+        equipment: row.querySelector('[data-field="equipment"]').value,
+      });
+    });
+    data.sections[s.id] = { time: timeInput.value, drills, notes: notes.value };
+  });
+
+  return data;
+}
+
+function savePlan() {
+  const data = getPlanData();
+  const key = 'fresh26-plan-' + (data.coach || 'draft') + '-' + (data.session || 'none');
+  localStorage.setItem('fresh26-plan-current', JSON.stringify(data));
+  localStorage.setItem(key, JSON.stringify(data));
+  showToast('Saved');
+}
+
+function loadPlan() {
+  const saved = localStorage.getItem('fresh26-plan-current');
+  if (!saved) return;
+  const data = JSON.parse(saved);
+
+  document.getElementById('coach').value = data.coach || '';
+  document.getElementById('session').value = data.session || '';
+  document.getElementById('group').value = data.group || '';
+  document.getElementById('players').value = data.players || '';
+  document.getElementById('level').value = data.level || '';
+  document.getElementById('duration').value = data.duration || '';
+  document.getElementById('equipment').value = data.equipment || '';
+  document.getElementById('topic').value = data.topic || '';
+
+  if (data.sections) {
+    sectionDefs.forEach(s => {
+      const sec = data.sections[s.id];
+      if (!sec) return;
+      const block = document.querySelector(`.section-block[data-section="${s.id}"]`);
+      block.querySelector('.time-input').value = sec.time || s.defaultTime;
+      block.querySelector('.tips-row textarea').value = sec.notes || '';
+
+      const drillsContainer = block.querySelector('.drills');
+      // Add extra drill rows if needed
+      while (drillsContainer.querySelectorAll('.drill-row').length < sec.drills.length) {
+        document.querySelector(`.add-drill[data-section="${s.id}"]`).click();
+      }
+      const rows = drillsContainer.querySelectorAll('.drill-row');
+      sec.drills.forEach((d, i) => {
+        if (!rows[i]) return;
+        rows[i].querySelector('[data-field="activity"]').value = d.activity || '';
+        rows[i].querySelector('[data-field="goals"]').value = d.goals || '';
+        rows[i].querySelector('[data-field="equipment"]').value = d.equipment || '';
+      });
+    });
+  }
+
+  // Auto-resize all textareas
+  setTimeout(() => document.querySelectorAll('textarea').forEach(autoResizeEl), 50);
+}
+
+function exportPlan() {
+  const d = getPlanData();
+  const sessionLabel = document.getElementById('session').selectedOptions[0]?.text || '';
+  const groupLabel = document.getElementById('group').selectedOptions[0]?.text || '';
+
+  let text = `FRESH 26 — TRAINING PLAN\n`;
+  text += `${'='.repeat(40)}\n\n`;
+  text += `Coach: ${d.coach}\n`;
+  text += `Session: ${sessionLabel}\n`;
+  text += `Group: ${groupLabel}\n`;
+  text += `Players: ${d.players}  |  Level: ${d.level}  |  Duration: ${d.duration}\n`;
+  text += `Equipment: ${d.equipment}\n`;
+  text += `Topic: ${d.topic}\n\n`;
+
+  sectionDefs.forEach(s => {
+    const sec = d.sections[s.id];
+    text += `${s.label.toUpperCase()} (${sec.time})\n`;
+    text += `${'-'.repeat(40)}\n`;
+    sec.drills.forEach((drill, i) => {
+      if (sec.drills.length > 1) text += `  Drill ${i + 1}:\n`;
+      if (drill.activity) text += `  Activity: ${drill.activity}\n`;
+      if (drill.goals) text += `  Goals: ${drill.goals}\n`;
+      if (drill.equipment) text += `  Equipment: ${drill.equipment}\n`;
+      text += `\n`;
+    });
+  });
+
+  navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard'));
+}
+
+function exportForAI() {
+  const sessionLabel = document.getElementById('session').selectedOptions[0]?.text || '[Select session above first]';
+  const groupLabel = document.getElementById('group').selectedOptions[0]?.text || '[Select group above first]';
+  const coach = document.getElementById('coach').value || '[Your name]';
+  const players = document.getElementById('players').value || '[number]';
+  const level = document.getElementById('level').value || '[e.g. Advanced / Pro]';
+  const dur = document.getElementById('duration').value || '[e.g. 120 min]';
+  const topicVal = document.getElementById('topic').value || '[e.g. Setting under athletic pressure]';
+
+  let t = `I need to create a training plan for a roundnet (Spikeball) training camp. Use the template below and help me fill it in. Ask me questions about each section one by one so I can dictate my answers.\n\n`;
+  t += `--- TRAINING PLAN TEMPLATE ---\n\n`;
+  t += `Coach: ${coach}\n`;
+  t += `Session: ${sessionLabel}\n`;
+  t += `Group: ${groupLabel}\n`;
+  t += `Players: ${players}  |  Level: ${level}  |  Duration: ${dur}\n`;
+  t += `Topic: ${topicVal}\n\n`;
+  t += `SECTION 1: INTRODUCTION / WARM-UP (approx. 25 min)\n`;
+  t += `- Activity / Description: [what happens]\n`;
+  t += `- Goals: [what players should get from this]\n`;
+  t += `- Equipment needed: [sets, balls, cones, etc.]\n\n`;
+  t += `SECTION 2: MAIN PART I — DRILLING (approx. 20-25 min)\n`;
+  t += `- Activity / Description: [drill setup, rotation, progressions]\n`;
+  t += `- Goals / Focus: [technique points, what to correct]\n`;
+  t += `- Equipment needed: [groupings, sets, balls]\n\n`;
+  t += `SECTION 3: MAIN PART II — ADVANCED DRILLING (approx. 20-25 min)\n`;
+  t += `- Activity / Description: [full rotation, game-like drill]\n`;
+  t += `- Goals / Focus: [applying technique under pressure]\n`;
+  t += `- Equipment needed: [groupings, sets, balls]\n\n`;
+  t += `SECTION 4: GAME FORMS / COOL DOWN (approx. 25 min)\n`;
+  t += `- Activity / Description: [modified games, scoring rules]\n`;
+  t += `- Goals: [reinforce session focus in competitive setting]\n`;
+  t += `- Equipment needed: [sets, balls]\n\n`;
+  t += `--- INSTRUCTIONS ---\n`;
+  t += `- Ask me about each section one at a time\n`;
+  t += `- I'll describe what I want to do, you format it cleanly\n`;
+  t += `- Include time estimates per activity\n`;
+  t += `- Keep the language simple and practical\n`;
+  t += `- At the end, output the complete formatted plan\n`;
+
+  navigator.clipboard.writeText(t).then(() => showToast('ChatGPT prompt copied!'));
+}
+
+function resetPlan() {
+  if (!confirm('Reset all fields? This cannot be undone.')) return;
+  localStorage.removeItem('fresh26-plan-current');
+  buildSections();
+  document.querySelectorAll('.meta-field input, .topic-bar input').forEach(el => el.value = '');
+  document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  showToast('Reset');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+// Init
+buildSections();
+loadPlan();
+</script>
+
+</body>
+</html>
