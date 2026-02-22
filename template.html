@@ -99,7 +99,16 @@
     padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 99; }
   .toast.show { opacity: 1; }
 
-  .note { background: var(--purple); color: white; padding: 16px 20px; font-size: 1rem; font-weight: 700; margin-bottom: 20px; border-radius: 10px; text-align: center; letter-spacing: 0.3px; }
+  .steps-banner { background: linear-gradient(135deg, var(--brand-lila), #ff6eb4); color: white; padding: 20px; margin-bottom: 20px; border-radius: 12px; animation: bannerPulse 2.5s ease-in-out infinite; }
+  @keyframes bannerPulse { 0%, 100% { transform: scale(1); box-shadow: 0 2px 8px rgba(216,86,176,0.3); } 50% { transform: scale(1.01); box-shadow: 0 6px 24px rgba(216,86,176,0.5); } }
+  .steps-banner h3 { font-size: 1.1rem; text-align: center; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px; }
+  .steps-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .step-card { background: rgba(255,255,255,0.15); border-radius: 8px; padding: 12px; text-align: center; backdrop-filter: blur(4px); }
+  .step-num { display: inline-block; width: 28px; height: 28px; line-height: 28px; background: white; color: var(--brand-lila); border-radius: 50%; font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; }
+  .step-card .action { font-weight: 800; font-size: 0.85rem; margin-bottom: 4px; }
+  .step-card .detail { font-size: 0.7rem; opacity: 0.9; line-height: 1.4; }
+  .step-or { font-size: 0.65rem; opacity: 0.7; text-align: center; margin: 6px 0; text-transform: uppercase; letter-spacing: 1px; }
+  @media (max-width: 600px) { .steps-grid { grid-template-columns: 1fr; } }
 
   /* Print */
   @media print {
@@ -123,8 +132,28 @@
 
 <div class="container">
 
-  <div class="note">
-    👆 Click any field to start typing — your plan auto-saves to your browser
+  <div class="steps-banner">
+    <h3>How to Write Your Training Plan</h3>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="action">Fill it in below</div>
+        <div class="detail">Click any field and type. It saves automatically.</div>
+        <div class="step-or">— or —</div>
+        <div class="detail">Hit <strong>"Copy Template for ChatGPT"</strong> below, paste it into ChatGPT, and just talk through your session.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="action">Export your plan</div>
+        <div class="detail">Click <strong>"Print / PDF"</strong> to save as PDF.<br>Or <strong>"Export Text"</strong> to copy it.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="action">Upload to Google Drive</div>
+        <div class="detail">Click the button, drag your PDF into the folder.</div>
+        <a href="https://drive.google.com/drive/folders/1-kCfMCVesCGER5f2s2pl-PqGmcXWYq_M" target="_blank" style="display:inline-block;margin-top:8px;padding:8px 16px;background:white;color:var(--brand-lila);border-radius:6px;font-weight:800;font-size:0.75rem;text-decoration:none;">Open Google Drive Folder</a>
+      </div>
+    </div>
   </div>
 
   <!-- Meta -->
