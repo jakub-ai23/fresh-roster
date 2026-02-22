@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRESH 26 — Coaches Manifesto</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+  :root {
+    --brand-blue: #00B4E3;
+    --brand-lila: #D856B0;
+    --purple: #4a148c;
+    --dark: #1a1a2e;
+    --card-bg: #f8f9fa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Montserrat', sans-serif; background: #f3f4f6; color: #333; }
+
+  /* Header */
+  .hero { background: linear-gradient(135deg, #1a1a2e 0%, #4a148c 100%); padding: 30px 20px; text-align: center; }
+  .hero img { height: 60px; margin-bottom: 12px; }
+  .hero h1 { color: white; font-size: 1.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; }
+  .hero .sub { color: rgba(255,255,255,0.7); font-size: 0.85rem; }
+  .hero .meta { color: rgba(255,255,255,0.5); font-size: 0.7rem; margin-top: 8px; }
+
+  /* Container */
+  .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+
+  /* Section */
+  .section { background: white; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .section h2 { color: var(--purple); font-size: 1.1rem; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; border-bottom: 2px solid #f0e6ff; padding-bottom: 6px; }
+  .section h3 { color: var(--purple); font-size: 0.9rem; font-weight: 700; margin: 14px 0 6px; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: 8px; }
+  th { background: var(--purple); color: white; padding: 6px 10px; text-align: left; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 6px 10px; border-bottom: 1px solid #eee; }
+  tr:hover td { background: #f8f5ff; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; color: white; }
+  .badge-pro { background: var(--brand-blue); }
+  .badge-con { background: #4ac29a; }
+  .badge-int { background: #90A4AE; }
+  .badge-clinic { background: var(--brand-lila); }
+  .badge-training { background: var(--brand-blue); }
+
+  /* Lists */
+  ul, ol { padding-left: 20px; font-size: 0.82rem; line-height: 1.7; }
+  li { margin-bottom: 2px; }
+  strong { color: var(--purple); }
+  .note { background: #fff8e1; border-left: 3px solid #FF9800; padding: 8px 12px; font-size: 0.78rem; margin: 10px 0; border-radius: 0 6px 6px 0; }
+  .highlight { background: #f0e6ff; border-left: 3px solid var(--purple); padding: 8px 12px; font-size: 0.78rem; margin: 10px 0; border-radius: 0 6px 6px 0; }
+
+  /* Collapsible Groups */
+  .group-toggle { width: 100%; background: none; border: 2px solid #e0d4f5; border-radius: 8px; padding: 10px 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; transition: all 0.15s; font-family: inherit; }
+  .group-toggle:hover { background: #f8f5ff; border-color: var(--purple); }
+  .group-toggle .label { font-weight: 700; font-size: 0.85rem; color: var(--purple); }
+  .group-toggle .info { font-size: 0.7rem; color: #888; }
+  .group-toggle .arrow { transition: transform 0.2s; font-size: 0.8rem; color: var(--purple); }
+  .group-toggle.open .arrow { transform: rotate(90deg); }
+  .group-body { display: none; padding: 6px 0 10px; }
+  .group-body.open { display: block; }
+
+  /* Player cards inside groups */
+  .player-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+  .player-chip { font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; background: #f0f0f0; border-left: 3px solid #ccc; }
+  .player-chip.pro-m { border-left-color: #4a9eff; }
+  .player-chip.pro-w { border-left-color: #ff6eb4; }
+  .player-chip.contender-m { border-left-color: #4ac29a; }
+  .player-chip.contender-w { border-left-color: #f093fb; }
+  .player-chip.intermediate { border-left-color: #90A4AE; }
+  .player-chip .coach-tag { background: var(--brand-blue); color: white; font-size: 0.55rem; padding: 1px 4px; border-radius: 3px; margin-left: 4px; font-weight: 700; }
+  .player-chip .self-num { font-size: 0.6rem; color: #999; margin-left: 3px; }
+
+  /* Toolbar */
+  .toolbar { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
+  .toolbar button { background: var(--purple); color: white; border: none; border-radius: 6px; padding: 8px 16px; font-size: 0.75rem; cursor: pointer; font-family: inherit; font-weight: 700; transition: opacity 0.15s; }
+  .toolbar button:hover { opacity: 0.85; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--purple); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 99; }
+  .toast.show { opacity: 1; }
+
+  /* Timeline */
+  .timeline-item { display: flex; gap: 10px; margin-bottom: 8px; font-size: 0.8rem; }
+  .timeline-time { min-width: 70px; font-weight: 700; color: var(--purple); text-align: right; }
+  .timeline-desc { flex: 1; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 20px; color: #999; font-size: 0.7rem; }
+
+  @media print { .toolbar { display: none; } body { background: white; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img src="images/Logo_FR_white2.png" alt="FRESH Roundnet">
+  <h1>Coaches Manifesto</h1>
+  <div class="sub">FRESH 26 — Mallorca Training Camp</div>
+  <div class="meta">Coaches Meeting Feb 22, 2026 | Next check-in: Sat March 1, 7 PM (if needed)</div>
+</div>
+
+<div class="container">
+
+  <!-- COACH ASSIGNMENTS -->
+  <div class="section">
+    <h2>Coach Assignments</h2>
+    <table>
+      <tr><th>Group</th><th>Coach</th><th>Level</th></tr>
+      <tr><td>Group 1</td><td><strong>Paq</strong></td><td><span class="badge badge-pro">Pro</span></td></tr>
+      <tr><td>Group 2</td><td><strong>Pascal</strong></td><td><span class="badge badge-pro">Pro / High Contender</span></td></tr>
+      <tr><td>Group 3</td><td><strong>Umut</strong></td><td><span class="badge badge-con">Contender</span></td></tr>
+      <tr><td>Group 4</td><td><strong>Cedric + Jonas</strong></td><td><span class="badge badge-int">Contender / Intermediate</span></td></tr>
+      <tr><td>Floating</td><td><strong>Lina</strong></td><td>Playing G1 + Women's clinics</td></tr>
+    </table>
+  </div>
+
+  <!-- GROUPS (collapsible) -->
+  <div class="section">
+    <h2>Training Groups</h2>
+    <div class="note">Groups are preliminary and may change. Click to expand.</div>
+    <div id="groups-container"></div>
+  </div>
+
+  <!-- TRAINING TOPICS -->
+  <div class="section">
+    <h2>Training Topics per Session</h2>
+    <table>
+      <tr><th>Day</th><th>Time</th><th>Type</th><th>Topics</th></tr>
+      <tr><td>Mon 9 Mar</td><td>14:30–16:30</td><td><span class="badge badge-training">Training</span></td><td>Setting, Social Play</td></tr>
+      <tr><td>Tue 10 Mar</td><td>09:30–12:30</td><td><span class="badge badge-training">Training</span></td><td>Serving, Serve Receive</td></tr>
+      <tr><td>Tue 10 Mar</td><td>14:30–16:30</td><td><span class="badge badge-clinic">Clinic</span></td><td>Hitting, Serving</td></tr>
+      <tr><td>Wed 11 Mar</td><td>09:30–12:30</td><td><span class="badge badge-training">Training</span></td><td>Hitting, Setting</td></tr>
+      <tr><td>Thu 12 Mar</td><td>09:30–12:30</td><td><span class="badge badge-training">Training</span></td><td>Defense</td></tr>
+      <tr><td>Thu 12 Mar</td><td>14:30–16:30</td><td><span class="badge badge-clinic">Clinic</span></td><td>Hitting, Serving</td></tr>
+      <tr><td>Fri 13 Mar</td><td>09:30–12:30</td><td><span class="badge badge-training">Training</span></td><td>Setting</td></tr>
+    </table>
+    <ul>
+      <li><strong>Clinics</strong> = cross-group (all players). Umut + Jonathan → Serving. Paq → Hitting (co-coach TBD).</li>
+      <li><strong>Training</strong> = per group, each coach runs their own.</li>
+    </ul>
+  </div>
+
+  <!-- MONDAY -->
+  <div class="section">
+    <h2>Monday — Official Start Day</h2>
+    <div class="timeline-item"><div class="timeline-time">09:00</div><div class="timeline-desc">Recovery session (morning)</div></div>
+    <div class="timeline-item"><div class="timeline-time">13:30</div><div class="timeline-desc"><strong>Lina's women's meetup</strong> — speech + warm-up together (all women)</div></div>
+    <div class="timeline-item"><div class="timeline-time">14:00</div><div class="timeline-desc"><strong>Official start by Jakub</strong> — welcome, intro, logistics</div></div>
+    <div class="timeline-item"><div class="timeline-time">14:00–14:30</div><div class="timeline-desc">Joint warm-up, all groups together</div></div>
+    <div class="timeline-item"><div class="timeline-time">14:30–15:30</div><div class="timeline-desc">Split into groups for 1 hour (first time in groups, Setting + Social Play)</div></div>
+    <div class="timeline-item"><div class="timeline-time">After 1h</div><div class="timeline-desc">
+      <strong>Women</strong> → separate clinic/training with Lina<br>
+      <strong>Beginners + Group 3</strong> → go with Cedric<br>
+      <strong>Group 1 + 2</strong> → merge for pickup / higher-level exercises
+    </div></div>
+  </div>
+
+  <!-- SQUAD TOURNAMENT -->
+  <div class="section">
+    <h2>Squad Tournament — Wednesday March 11</h2>
+    <ul>
+      <li>Full-day internal squad tournament replacing normal training</li>
+      <li>Details to be briefed separately</li>
+    </ul>
+  </div>
+
+  <!-- SESSION STRUCTURE -->
+  <div class="section">
+    <h2>Training Session Structure</h2>
+    <ol>
+      <li><strong>Warm-up</strong> — Team lap + stretching (top & bottom half), then 5–10 min individual stretch</li>
+      <li><strong>Phase 1 — Drilling (20–25 min)</strong> — Fundamentals, in-system drills (e.g., throw → set → finish)</li>
+      <li><strong>Phase 2 — Advanced drilling (20–25 min)</strong> — Full rotations (first touch → set → attack)</li>
+      <li><strong>Game forms / Pickup (remaining time)</strong> — Coach picks nets, mixing skill levels. Use modified scoring to reinforce the day's focus (e.g., push = 2 pts, same server 5x in a row)</li>
+    </ol>
+  </div>
+
+  <!-- DAILY PICKUPS -->
+  <div class="section">
+    <h2>Daily Pickups (16:30–18:00)</h2>
+    <ul>
+      <li><strong>All groups start together</strong> at 16:30 — everyone plays with everyone, all fields</li>
+      <li><strong>Game 1:</strong> 15 minutes, random teams across all nets</li>
+      <li><strong>Game 2+:</strong> Winners move one net up, losers stay. Old teammates split via rock-paper-scissors to form new teams</li>
+      <li>Format: standard roundnet</li>
+      <li>Repeat rotation for remaining time</li>
+    </ul>
+  </div>
+
+  <!-- CLINIC FOCUS -->
+  <div class="section">
+    <h2>Clinic Details</h2>
+    <ul>
+      <li>Focus on <strong>basic tips and fundamentals</strong>, not advanced strategy</li>
+      <li><strong>Serve Receive:</strong> fundamentals, positioning, basic reads</li>
+      <li><strong>Hitting:</strong> Paq leads (co-coach TBD), core technique</li>
+      <li><strong>Serving:</strong> Umut + Jonathan Harder</li>
+    </ul>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div class="section">
+    <h2>Equipment & Logistics</h2>
+    <ul>
+      <li><strong>24 Spikeball Titan sets</strong> — Jakub pre-builds with early arrivals</li>
+      <li>Each coach gets a <strong>bag with balls, equipment + sets</strong> for their group</li>
+      <li>Sets stored in "the dungeon" (on-site, confirmed once there)</li>
+      <li>Most coaches travel by bus — help load equipment for tournament days</li>
+      <li><strong>Ball accountability:</strong> Collect ALL balls at end of every session. They cost money.</li>
+    </ul>
+  </div>
+
+  <!-- ACTION ITEMS -->
+  <div class="section">
+    <h2>Action Items — Due by Saturday March 1</h2>
+    <table>
+      <tr><th>Who</th><th>Task</th></tr>
+      <tr><td><strong>All coaches</strong></td><td>Submit written training plan for your sessions (at least semi-detailed overview)</td></tr>
+      <tr><td><strong>All coaches</strong></td><td>Upload plans to WhatsApp group before Saturday — if complete, meeting is skipped</td></tr>
+      <tr><td><strong>Jakub</strong></td><td>Send meeting notes, group lists, schedule, training topics</td></tr>
+      <tr><td><strong>Jakub</strong></td><td>Send old training plan templates (Lucas Tapkin's format) as reference</td></tr>
+      <tr><td><strong>Jakub</strong></td><td>Send calendar invite for March 1 safety-net meeting (7 PM)</td></tr>
+      <tr><td><strong>Jakub</strong></td><td>Secure music speaker from the restaurant</td></tr>
+      <tr><td><strong>Jakub</strong></td><td>Confirm party night with restaurant</td></tr>
+    </table>
+
+    <h3>Training Plan Format</h3>
+    <div class="highlight">
+      Use the template from Lucas Tapkin's previous sessions:<br>
+      Introduction / Mobility → Goals → Organization / Equipment → Main Part 1 → Main Part 2 → Game Forms / Closing
+    </div>
+    <div class="note">
+      <strong>Tip:</strong> Download the old plans, feed them to ChatGPT: "use this as a template, ask me questions, format it the same way." Then just dictate your session plan.
+    </div>
+  </div>
+
+  <!-- FOR JONAS -->
+  <div class="section">
+    <h2>For Jonas & Jonathan (not present)</h2>
+    <ul>
+      <li>Review the group lists, training topics, and schedule above</li>
+      <li><strong>Jonas:</strong> You're sharing Group 4 (Contender/Intermediate) with Cedric. Coordinate who leads which session day.</li>
+      <li><strong>Jonathan:</strong> You're co-leading serving clinics with Umut.</li>
+      <li>Submit training plans by Saturday March 1 to the WhatsApp group.</li>
+    </ul>
+  </div>
+
+  <!-- COMMUNICATION -->
+  <div class="section">
+    <h2>Communication</h2>
+    <ul>
+      <li><strong>WhatsApp group</strong> is the main channel</li>
+      <li>Stuck on training plan? Text Jakub or the group before Saturday</li>
+      <li>Coaches help each other — take inspiration from each other's plans</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    Less than 10 days until Mallorca. Let's make it legendary.<br>
+    FRESH 26 — Play Your Best. We Handle the Rest.
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// Player data for collapsible groups
+const groups = [
+  { id: 1, label: "Group 1 — Pro", coach: "Paq", players: [
+    { name: "Cedric", cls: "pro-m", coach: true },
+    { name: "Lina Gunther", cls: "pro-w", self: 1, coach: true },
+    { name: "Lauma Ernestsone", cls: "pro-w", self: 1 },
+    { name: "Paul Volle", cls: "pro-m", self: 1 },
+    { name: "Franziska Stadler", cls: "pro-w", self: 1 },
+    { name: "Karl Wolf", cls: "contender-m", self: 1 },
+    { name: "Aleksandrs Juska", cls: "pro-m", self: 1 },
+    { name: "Lucas Christiani", cls: "pro-m", self: 1 },
+    { name: "Thibaud Brun", cls: "pro-m", self: 1 },
+    { name: "Jonathan Harder", cls: "pro-m", self: 1 },
+    { name: "Tim Bichler", cls: "pro-m", self: 1 },
+    { name: "Kasimir Nerad", cls: "pro-m", self: 1 },
+    { name: "Louis Mareschal", cls: "pro-m", self: 1 },
+    { name: "Kyle Fowler", cls: "pro-m", self: 1 },
+    { name: "Svenja Kuhner", cls: "pro-w", self: 1 },
+    { name: "Teo Kukuljan", cls: "pro-m", self: 1 },
+  ]},
+  { id: 2, label: "Group 2 — Pro/High Contender", coach: "Pascal", players: [
+    { name: "Jeroen Brus", cls: "pro-m", self: 1 },
+    { name: "Christian M. Brodsgaard", cls: "contender-m", self: 1 },
+    { name: "Pieter-Jan Zwaan", cls: "contender-m", self: 2 },
+    { name: "Yanis Bouchemoua", cls: "pro-m", self: 1 },
+    { name: "Maxime Dumargne", cls: "pro-m", self: 4 },
+    { name: "Asbjorn Ditlev", cls: "contender-m", self: 2 },
+    { name: "Marek Szymanski", cls: "contender-m", self: 5 },
+    { name: "Sam Bunze", cls: "contender-m", self: 2 },
+    { name: "Nicolas Perriraz", cls: "pro-m", self: 1 },
+    { name: "Oussama Tchita", cls: "pro-m", self: 1 },
+    { name: "Liv Sepstrup", cls: "pro-w", self: 1 },
+    { name: "Daniel Schurholz", cls: "contender-m", self: 2 },
+  ]},
+  { id: 3, label: "Group 3 — Contender", coach: "Umut", players: [
+    { name: "Tosca Pecorino", cls: "pro-w", self: 3 },
+    { name: "Mads Overgaard Jensen", cls: "contender-m", self: 3 },
+    { name: "Rudo Brus", cls: "contender-m", self: 3 },
+    { name: "Erik Scheland", cls: "contender-m", self: 3 },
+    { name: "Anne Sogaard Kristensen", cls: "contender-w", self: 3 },
+    { name: "Tim Hardenacke", cls: "contender-m", self: 3 },
+    { name: "Andreas Serov", cls: "contender-m", self: 3 },
+    { name: "Marthe Michielsen", cls: "contender-w", self: 4 },
+    { name: "Mie Korsholt", cls: "contender-w", self: 4 },
+    { name: "Marvin Koch", cls: "contender-m", self: 3 },
+    { name: "Pieterjan Uytterhoeven", cls: "contender-m", self: 3 },
+    { name: "Frederik Rall", cls: "contender-m", self: 3 },
+  ]},
+  { id: 4, label: "Group 4 — Contender/Intermediate", coach: "Cedric + Jonas", players: [
+    { name: "Lieze Dockx", cls: "contender-w", self: 3 },
+    { name: "Selina Bachmann", cls: "contender-w", self: 4 },
+    { name: "Sajid Anower", cls: "contender-m", self: 5 },
+    { name: "Klaudia Radwanska", cls: "contender-w", self: 4 },
+    { name: "Kamil Kowalewski", cls: "contender-m", self: 5 },
+    { name: "Alois Trondl", cls: "contender-m", self: 5 },
+    { name: "Lidia Popa", cls: "contender-w", self: 3 },
+    { name: "Roos van der Donk", cls: "contender-w", self: 4 },
+    { name: "Teodora Veres", cls: "contender-w", self: 4 },
+    { name: "Christoph Hochrein", cls: "intermediate", self: 5 },
+    { name: "Chiara Nemeth", cls: "contender-w", self: 5 },
+    { name: "Toni", cls: "intermediate" },
+  ]},
+];
+
+const container = document.getElementById("groups-container");
+
+groups.forEach(g => {
+  const toggle = document.createElement("button");
+  toggle.className = "group-toggle";
+  toggle.innerHTML = `<span class="label">${g.label} <span style="font-weight:400;font-size:0.75rem;color:#888;">(${g.players.length} players — Coach: ${g.coach})</span></span><span class="arrow">&#9654;</span>`;
+
+  const body = document.createElement("div");
+  body.className = "group-body";
+
+  const grid = document.createElement("div");
+  grid.className = "player-grid";
+
+  g.players.forEach(p => {
+    const chip = document.createElement("span");
+    chip.className = `player-chip ${p.cls}`;
+    let html = p.name;
+    if (p.self) html += `<span class="self-num">${p.self}</span>`;
+    if (p.coach) html += `<span class="coach-tag">COACH</span>`;
+    chip.innerHTML = html;
+    grid.appendChild(chip);
+  });
+
+  body.appendChild(grid);
+  container.appendChild(toggle);
+  container.appendChild(body);
+
+  toggle.addEventListener("click", () => {
+    toggle.classList.toggle("open");
+    body.classList.toggle("open");
+  });
+});
+</script>
+
+</body>
+</html>
