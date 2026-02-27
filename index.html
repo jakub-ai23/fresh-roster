@@ -117,15 +117,15 @@
   @media(max-width:700px){
     .main-stage{flex-direction:column;gap:20px}
     .side-logo{width:80px}
-    .roster-grid{grid-template-columns:repeat(3,110px);gap:10px}
-    .mini-card{width:110px;height:155px;border-radius:8px}
-    .mini-question{font-size:22px}
-    .mini-spike-icon{width:60px;height:60px}
-    .mini-number{font-size:32px}
-    .mini-badge{font-size:4px;padding:2px 4px}
-    .mini-label{font-size:5px;letter-spacing:2px}
-    .mini-thumb-name{font-size:16px;bottom:6px;left:8px}
-    .mini-thumb-flag{font-size:12px;top:6px;right:6px}
+    .roster-grid{display:flex;flex-direction:column;align-items:center;gap:20px}
+    .mini-card{width:70vw;max-width:280px;height:calc(70vw * 1.44);max-height:400px;border-radius:12px}
+    .mini-question{font-size:32px}
+    .mini-spike-icon{width:100px;height:100px}
+    .mini-number{font-size:42px}
+    .mini-badge{font-size:6px;padding:4px 8px}
+    .mini-label{font-size:8px;letter-spacing:3px}
+    .mini-thumb-name{font-size:28px;bottom:16px;left:16px}
+    .mini-thumb-flag{font-size:24px;top:12px;right:12px}
     .event-title{font-size:40px;letter-spacing:8px;gap:10px}
     .title-logo{height:36px}
     .overlay.active .big-card-wrapper{transform:scale(0.9)}
@@ -143,8 +143,8 @@
     .overlay-close{top:12px;right:12px;font-size:9px;padding:6px 12px}
   }
   @media(max-width:400px){
-    .roster-grid{grid-template-columns:repeat(3,95px);gap:8px}
-    .mini-card{width:95px;height:135px}
+    .roster-grid{display:flex;flex-direction:column;align-items:center;gap:16px}
+    .mini-card{width:75vw;max-width:260px;height:calc(75vw * 1.44);max-height:375px}
     .overlay.active .big-card-wrapper{transform:scale(0.95)}
     .countdown-boxes{gap:6px}
     .countdown-box{min-width:48px;padding:6px 8px}
@@ -158,7 +158,8 @@
     .big-title{font-size:10px}
     .big-accom-tag{font-size:4.5px;padding:2px 4px}
     .big-credit{font-size:4.5px;bottom:5px;right:6px}
-    .mini-thumb-name{font-size:14px;bottom:5px;left:6px}
+    .mini-thumb-name{font-size:24px;bottom:14px;left:14px}
+    .mini-thumb-flag{font-size:20px;top:10px;right:10px}
   }
   @media(max-width:700px){.side-logo.desktop{display:none}}
   .mobile-logos{display:flex;justify-content:center;align-items:center;gap:24px;margin-bottom:16px;position:relative;z-index:2}
