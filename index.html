@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRESH 26 — ROSTER REVEAL</title>
+<style>
+
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0a0a0f;display:flex;flex-direction:column;align-items:center;min-height:100vh;font-family:'Rajdhani',sans-serif;overflow-x:hidden;padding:20px}
+  .bg-glow{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;background:radial-gradient(ellipse 600px 400px at 30% 20%,rgba(0,180,255,0.06) 0%,transparent 70%),radial-gradient(ellipse 500px 500px at 70% 80%,rgba(255,170,0,0.04) 0%,transparent 70%)}
+  .particles{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;overflow:hidden}
+  .particle{position:absolute;width:2px;height:2px;background:#00b4ff;border-radius:50%;opacity:0;animation:pf linear infinite}
+  @keyframes pf{0%{opacity:0;transform:translateY(100vh)}10%{opacity:.5}90%{opacity:.5}100%{opacity:0;transform:translateY(-20px) translateX(var(--drift))}}
+  .event-header{position:relative;z-index:2;text-align:center;margin:10px 0 30px}
+  .event-tag{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:8px;color:#00b4ff}
+  .event-title{font-family:'Bebas Neue',sans-serif;font-size:56px;letter-spacing:12px;color:#fff;line-height:1;margin:6px 0;text-shadow:0 0 60px rgba(0,180,255,0.3);display:flex;align-items:center;justify-content:center;gap:16px}
+  .event-title-text{display:inline}
+  .title-logo{height:50px;width:auto;animation:titleFloat 5s ease-in-out infinite}
+  .title-logo.right{animation-delay:-2.5s}
+  @keyframes titleFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.04)}}
+  .event-sub{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:6px;color:#666}
+  @keyframes fi{from{opacity:0;transform:translateY(-15px)}to{opacity:1;transform:translateY(0)}}
+  .main-stage{position:relative;z-index:2;display:flex;align-items:center;gap:40px}
+  .side-logo{width:100px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+  .side-logo.right{width:160px}
+  .side-logo img{width:100%;height:auto;filter:drop-shadow(0 0 20px rgba(0,180,255,0.15))}
+  .side-logo.left img{animation:dL 6s ease-in-out infinite}
+  .side-logo.right img{animation:dR 6s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(0,180,255,0.15))}
+  @keyframes dL{0%,100%{transform:translateY(0) rotate(0deg) scale(1)}25%{transform:translateY(-8px) rotate(-2deg) scale(1.03)}50%{transform:translateY(4px) rotate(1deg) scale(0.98)}75%{transform:translateY(-4px) rotate(-1deg) scale(1.02)}}
+  @keyframes dR{0%,100%{transform:translateY(0) rotate(0deg) scale(1)}25%{transform:translateY(6px) rotate(2deg) scale(1.02)}50%{transform:translateY(-6px) rotate(-1.5deg) scale(1.04)}75%{transform:translateY(3px) rotate(1deg) scale(0.99)}}
+  .roster-grid{display:grid;grid-template-columns:repeat(3,180px);gap:16px;justify-content:center}
+  .mini-card{width:180px;height:250px;background:#0d0d15;border:1px solid #1a1a2a;border-radius:10px;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,border-color .3s,box-shadow .3s;display:flex;flex-direction:column;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .mini-card:hover{transform:translateY(-4px) scale(1.03);border-color:#00b4ff40;box-shadow:0 8px 30px rgba(0,180,255,0.1)}
+  .mini-card.revealed-mini{border-color:#00b4ff30}
+  .mini-pattern{position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(45deg,transparent,transparent 12px,rgba(0,180,255,0.015) 12px,rgba(0,180,255,0.015) 13px),repeating-linear-gradient(-45deg,transparent,transparent 12px,rgba(255,170,0,0.015) 12px,rgba(255,170,0,0.015) 13px)}
+  .mini-number{display:none}
+  .mini-question{display:none}
+  @keyframes mp{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.5;transform:scale(1.05)}}
+  .mini-label{font-family:'Orbitron',monospace;font-size:6px;letter-spacing:3px;color:#fff;margin-top:8px;z-index:2}
+  .mini-badge{position:absolute;top:10px;left:10px;font-family:'Orbitron',monospace;font-size:5px;font-weight:700;letter-spacing:2px;color:#888;border:1px solid #444;padding:3px 6px;border-radius:2px;z-index:2}
+  .mini-spike-icon{width:100px;height:100px;opacity:0.85;z-index:2;margin-bottom:0;animation:sf 4s ease-in-out infinite;filter:invert(1)}
+  @keyframes sf{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.06)}}
+  .mini-thumb{display:none;position:absolute;top:0;left:0;width:100%;height:100%;border-radius:10px;overflow:hidden}
+  .mini-thumb img{width:100%;height:100%;object-fit:cover;object-position:center 10%;filter:contrast(1.05) saturate(1.05)}
+  .mini-thumb::after{content:'';position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(to top,#0d0d15 0%,rgba(13,13,21,0.8) 40%,transparent 100%)}
+  .mini-thumb-name{position:absolute;bottom:10px;left:12px;z-index:3;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;text-shadow:0 2px 10px rgba(0,0,0,0.8)}
+  .mini-thumb-flag{position:absolute;top:10px;right:10px;font-size:16px;z-index:3}
+  .revealed-mini .mini-thumb{display:block}
+  .revealed-mini .mini-pattern,.revealed-mini .mini-question,.revealed-mini .mini-label,.revealed-mini .mini-badge,.revealed-mini .mini-number,.revealed-mini .mini-spike-icon{display:none}
+  .mini-card.reveal-anim{animation:mrp .6s cubic-bezier(0.16,1,0.3,1) forwards}
+  @keyframes mrp{0%{transform:scale(1)}30%{transform:scale(1.08)}100%{transform:scale(1)}}
+  .overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;align-items:center;justify-content:center;background:rgba(0,0,0,0);transition:background .4s}
+  .overlay.active{display:flex;background:rgba(0,0,0,0.88)}
+  .overlay-close{position:absolute;top:20px;right:24px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:4px;color:#444;cursor:pointer;z-index:110;padding:10px 18px;border:1px solid #333;border-radius:4px;background:rgba(0,0,0,0.5);transition:all .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .overlay-close:hover{color:#fff;border-color:#fff}
+  .big-card-wrapper{-webkit-perspective:1200px;perspective:1200px;transform:scale(0.3);opacity:0;transition:transform .6s cubic-bezier(0.16,1,0.3,1),opacity .4s}
+  .overlay.active .big-card-wrapper{transform:scale(1);opacity:1}
+  .big-card{width:360px;height:520px;-webkit-transform-style:preserve-3d;transform-style:preserve-3d;transition:transform .8s cubic-bezier(0.4,0,0.2,1);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .big-card.flipped{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
+  .big-face{position:absolute;top:0;left:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;overflow:hidden}
+  .big-back{background:#0d0d15;border:2px solid #1a1a2a;display:flex;flex-direction:column;align-items:center;justify-content:center;-webkit-transform:rotateY(0deg);transform:rotateY(0deg);z-index:2}
+  .big-back-pattern{position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(0,180,255,0.02) 20px,rgba(0,180,255,0.02) 21px),repeating-linear-gradient(-45deg,transparent,transparent 20px,rgba(255,170,0,0.02) 20px,rgba(255,170,0,0.02) 21px)}
+  .big-back-spike{width:180px;height:180px;opacity:0.9;z-index:2;margin-bottom:10px;animation:sf 4s ease-in-out infinite;filter:invert(1)}
+  .big-back-logo{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:8px;color:#1a1a2a;z-index:2}
+  .big-back-q{display:none}
+  .big-back-tap{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:4px;color:#fff;margin-top:30px;z-index:2;animation:tp 2s ease-in-out infinite}
+  @keyframes tp{0%,100%{opacity:.4}50%{opacity:.8}}
+  .big-back-badge{position:absolute;top:16px;left:16px;font-family:'Orbitron',monospace;font-size:7px;font-weight:700;letter-spacing:3px;color:#888;border:1px solid #444;padding:4px 10px;border-radius:3px;z-index:2}
+  .big-back-num{display:none}
+  .big-front{-webkit-transform:rotateY(180deg);transform:rotateY(180deg);background:#0d0d15;z-index:1}
+  .big-front::before{content:'';position:absolute;inset:-2px;border-radius:18px;z-index:-1;background:linear-gradient(135deg,#00b4ff,#0066cc,#ffaa00,#ff6600,#00b4ff);background-size:400% 400%;animation:bg 4s ease-in-out infinite}
+  @keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .big-front-inner{position:relative;width:100%;height:100%;border-radius:16px;overflow:hidden;background:#0d0d15}
+  .big-photo{position:relative;width:100%;height:420px;overflow:hidden}
+  .big-photo img{width:100%;height:100%;object-fit:cover;object-position:center 10%;filter:contrast(1.1) saturate(1.1)}
+  .big-photo::after{content:'';position:absolute;bottom:0;left:0;right:0;height:160px;background:linear-gradient(to top,#0d0d15 0%,rgba(13,13,21,0.9) 30%,transparent 100%)}
+  .big-top-bar{position:absolute;top:0;left:0;right:0;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;z-index:5;background:linear-gradient(to bottom,rgba(0,0,0,0.6),transparent)}
+  .big-event-badge{font-family:'Orbitron',monospace;font-size:7px;font-weight:700;letter-spacing:3px;color:#00b4ff;background:rgba(0,180,255,0.1);border:1px solid rgba(0,180,255,0.3);padding:4px 10px;border-radius:3px}
+  .big-role{display:none}
+  .big-info{position:absolute;bottom:0;left:0;right:0;padding:0 24px 20px;z-index:5}
+  .big-country{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+  .big-flag{font-size:18px}
+  .big-country-name{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:4px;color:#00b4ff}
+  .big-player-name{font-family:'Bebas Neue',sans-serif;font-size:52px;color:#fff;line-height:1;letter-spacing:4px;text-shadow:0 2px 20px rgba(0,0,0,0.8)}
+  .big-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:#ffaa00;letter-spacing:3px;text-transform:uppercase;margin-top:2px}
+  .big-corner{position:absolute;width:20px;height:20px;z-index:5;opacity:.3}
+  .big-corner.tl{top:50px;left:16px;border-top:2px solid #00b4ff;border-left:2px solid #00b4ff}
+  .big-corner.br{bottom:16px;right:16px;border-bottom:2px solid #ffaa00;border-right:2px solid #ffaa00}
+  .big-scanlines{position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:6}
+  .big-shimmer{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(105deg,transparent 40%,rgba(0,180,255,0.08) 45%,rgba(255,170,0,0.08) 50%,transparent 55%);background-size:250% 100%;animation:sh 3s ease-in-out infinite;pointer-events:none;z-index:7}
+  @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  .big-flash{position:absolute;top:0;left:0;right:0;bottom:0;background:#fff;opacity:0;z-index:20;pointer-events:none;border-radius:16px}
+  .big-card.do-flash .big-front .big-flash{animation:rf .8s ease-out .35s forwards}
+  @keyframes rf{0%{opacity:.9}100%{opacity:0}}
+  .big-not-yet{display:none;position:absolute;top:0;left:0;right:0;bottom:0;z-index:30;background:rgba(13,13,21,0.95);border-radius:16px;flex-direction:column;align-items:center;justify-content:center}
+  .big-card.show-not-yet .big-face.big-back .big-not-yet{display:flex}
+  .not-yet-text{font-family:'Orbitron',monospace;font-size:12px;letter-spacing:4px;color:#333}
+  .not-yet-date{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#1a1a2a;margin-top:8px;letter-spacing:4px}
+  .sponsor-bar{position:relative;z-index:2;margin-top:24px;display:flex;align-items:center;gap:12px}
+  .sponsor-label{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:4px;color:#444}
+  .sponsor-div{width:1px;height:16px;background:#333}
+  .sponsor-name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:6px;color:#555}
+  .countdown-section{position:relative;z-index:2;text-align:center;margin-bottom:24px}
+  .countdown-label{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:6px;color:#666;margin-bottom:12px}
+  .countdown-stars{font-size:10px;letter-spacing:12px;color:#00b4ff;margin-bottom:10px;opacity:0.5;animation:starPulse 3s ease-in-out infinite}
+  @keyframes starPulse{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:0.7;transform:scale(1.1)}}
+  .countdown-boxes{display:flex;justify-content:center;gap:12px}
+  .countdown-box{background:rgba(13,13,21,0.8);border:1px solid #1a1a2a;border-radius:8px;padding:12px 16px;min-width:70px;text-align:center}
+  .countdown-num{font-family:'Bebas Neue',sans-serif;font-size:36px;color:#fff;line-height:1;text-shadow:0 0 20px rgba(0,180,255,0.2)}
+  .countdown-unit{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:3px;color:#00b4ff;margin-top:4px}
+  .countdown-done{font-family:'Bebas Neue',sans-serif;font-size:28px;color:#ffaa00;letter-spacing:4px;animation:tp 2s ease-in-out infinite}
+  .big-accomplishments{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+  .big-accom-tag{font-family:'Orbitron',monospace;font-size:6px;letter-spacing:1.5px;color:#ffaa00;background:rgba(255,170,0,0.08);border:1px solid rgba(255,170,0,0.2);padding:3px 7px;border-radius:2px;white-space:nowrap}
+  .big-credit{position:absolute;bottom:8px;right:12px;font-family:'Orbitron',monospace;font-size:6px;letter-spacing:1px;color:rgba(255,255,255,0.5);z-index:8}
+  @media(max-width:700px){
+    .main-stage{flex-direction:column;gap:20px}
+    .side-logo{width:80px}
+    .roster-grid{grid-template-columns:repeat(3,110px);gap:10px}
+    .mini-card{width:110px;height:155px;border-radius:8px}
+    .mini-question{font-size:22px}
+    .mini-spike-icon{width:60px;height:60px}
+    .mini-number{font-size:32px}
+    .mini-badge{font-size:4px;padding:2px 4px}
+    .mini-label{font-size:5px;letter-spacing:2px}
+    .mini-thumb-name{font-size:16px;bottom:6px;left:8px}
+    .mini-thumb-flag{font-size:12px;top:6px;right:6px}
+    .event-title{font-size:40px;letter-spacing:8px;gap:10px}
+    .title-logo{height:36px}
+    .overlay.active .big-card-wrapper{transform:scale(0.9)}
+    .big-card{width:min(320px,90vw);height:min(480px,80vh)}
+    .big-photo{height:65%}
+    .big-player-name{font-size:36px}
+    .big-info{padding:0 16px 14px}
+    .big-title{font-size:11px;letter-spacing:2px}
+    .big-accomplishments{gap:4px;margin-top:6px}
+    .big-accom-tag{font-size:5px;padding:2px 5px}
+    .big-credit{font-size:5px;bottom:6px;right:8px}
+    .countdown-box{min-width:55px;padding:8px 10px}
+    .countdown-num{font-size:28px}
+    .countdown-unit{font-size:6px}
+    .overlay-close{top:12px;right:12px;font-size:9px;padding:6px 12px}
+  }
+  @media(max-width:400px){
+    .roster-grid{grid-template-columns:repeat(3,95px);gap:8px}
+    .mini-card{width:95px;height:135px}
+    .overlay.active .big-card-wrapper{transform:scale(0.95)}
+    .countdown-boxes{gap:6px}
+    .countdown-box{min-width:48px;padding:6px 8px}
+    .countdown-num{font-size:24px}
+    .event-title{font-size:32px;letter-spacing:6px;gap:8px}
+    .title-logo{height:28px}
+    .big-card{width:min(280px,92vw);height:min(420px,78vh)}
+    .big-photo{height:62%}
+    .big-player-name{font-size:30px}
+    .big-info{padding:0 12px 12px}
+    .big-title{font-size:10px}
+    .big-accom-tag{font-size:4.5px;padding:2px 4px}
+    .big-credit{font-size:4.5px;bottom:5px;right:6px}
+    .mini-thumb-name{font-size:14px;bottom:5px;left:6px}
+  }
+  @media(max-width:700px){.side-logo.desktop{display:none}}
+  .mobile-logos{display:flex;justify-content:center;align-items:center;gap:24px;margin-bottom:16px;position:relative;z-index:2}
+  .mobile-logo-left{height:40px;width:auto;opacity:0.8}
+  .mobile-logo-right{height:20px;width:auto;opacity:0.8}
+  @media(min-width:701px){.mobile-logos{display:none}}
+
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+<div class="particles" id="particles"></div>
+
+<div class="event-header"><div class="event-tag">Mallorca 2026</div><div class="event-title"><img class="title-logo left" src="images/Logo_FR_color.png" alt="FR"><span class="event-title-text">FRESH 26</span><img class="title-logo right" src="images/Logo_FR_color.png" alt="FR"></div><div class="event-sub">Roster Reveal</div></div>
+
+<div class="countdown-section">
+  <div class="countdown-stars">&#10022; &#10022; &#10022;</div>
+  <div class="countdown-boxes" id="countdown">
+    <div class="countdown-box"><div class="countdown-num" id="cd-days">--</div><div class="countdown-unit">DAYS</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="cd-hours">--</div><div class="countdown-unit">HOURS</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="cd-mins">--</div><div class="countdown-unit">MINS</div></div>
+    <div class="countdown-box"><div class="countdown-num" id="cd-secs">--</div><div class="countdown-unit">SECS</div></div>
+  </div>
+</div>
+
+<div class="mobile-logos">
+  <img src="images/Logo_FR_white2.png" alt="Future Roundnet" class="mobile-logo-left">
+  <img src="images/spikeball_text.png" alt="Spikeball" class="mobile-logo-right">
+</div>
+
+<div class="main-stage">
+  <div class="side-logo left desktop"><img src="images/Logo_FR_white2.png" alt="Future Roundnet"></div>
+  <div class="roster-grid" id="rosterGrid"></div>
+  <div class="side-logo right desktop"><img src="images/spikeball_text.png" alt="Spikeball"></div>
+</div>
+
+<div class="sponsor-bar"><span class="sponsor-label">Powered by</span><div class="sponsor-div"></div><span class="sponsor-name">SPIKEBALL</span></div>
+
+<div class="overlay" id="overlay">
+  <button class="overlay-close" onclick="closeOverlay()">&#10005; CLOSE</button>
+  <div class="big-card-wrapper"><div class="big-card" id="bigCard" onclick="flipBig()">
+    <div class="big-face big-back"><div class="big-back-pattern"></div><div class="big-back-badge">FRESH 26</div><img class="big-back-spike" src="images/spikeball_logo.png" alt=""><div class="big-back-logo">FRESH</div><div class="big-back-q">?</div><div class="big-back-tap">TAP TO REVEAL</div><div class="big-back-num" id="bigNum">#01</div><div class="big-not-yet"><div class="not-yet-text">COMING SOON</div><div class="not-yet-date">STAY TUNED</div></div></div>
+    <div class="big-face big-front"><div class="big-front-inner"><div class="big-top-bar"><div class="big-event-badge">FRESH 26</div><div class="big-role" id="bigRole">PLAYER</div></div><div class="big-photo"><img id="bigImg" src="" alt="Player"></div><div class="big-corner tl"></div><div class="big-corner br"></div><div class="big-info"><div class="big-country"><span class="big-flag" id="bigFlag"></span><span class="big-country-name" id="bigCountry"></span></div><div class="big-player-name" id="bigName"></div><div class="big-title" id="bigTitle"></div><div class="big-accomplishments" id="bigAccomplishments"></div></div><div class="big-credit" id="bigCredit"></div><div class="big-flash"></div><div class="big-scanlines"></div><div class="big-shimmer"></div></div></div>
+  </div></div>
+</div>
+
+<script>
+  const SPIKE_ICON = "images/spikeball_logo.png";
+  const PLAYERS = [
+    {id:1, revealed:true, name:"JONATHAN HARDER", country:"GERMANY", flag:"🇩🇪", title:"European Champion", img:"images/player1.jpg", accomplishments:["European Champion", "Best German Server", "ETS Champion", "Masters Stuttgart", "Masters Hannover"], credit:"📸 Ruwen Schröder / Roundnet Germany"},
+    {id:2, revealed:true, name:"LUCAS CHRISTIANI", country:"GERMANY", flag:"🇩🇪", title:"European Champion", img:"images/player2.jpg", accomplishments:["European Champion", "ETS Champion", "ETS Basel", "ETS Paris", "ETS Championship Aarhus"], credit:"📸 Ruwen Schröder / Roundnet Germany"},
+    {id:3, revealed:true, name:"PAQ CLIFFORD", country:"USA", flag:"🇺🇸", title:"Formerly Numb", img:"images/player3.jpg", accomplishments:["North American Champion 2025"]},
+    {id:4, revealed:true, name:"KYLE FOWLER", country:"USA", flag:"🇺🇸", title:"Pan America Champion", img:"images/player4.jpg", accomplishments:["Pan America '25 Open Champion", "Pan America '25 Coed Silver", "Team USA vs Canada '25 Winner"], credit:"📸 Ruwen Schroder / Roundnet Photography"},
+    {id:5, revealed:true, name:"FRANZISKA STADLER", country:"GERMANY", flag:"🇩🇪", title:"Vice World Champion", img:"images/player5.jpg", accomplishments:["Vice World Champion '24 Individual", "Vice World Champion '24 Squad"], credit:"📸 Ruwen Schröder / Roundnet Germany"},
+    {id:6, revealed:true, name:"LOUIS MARESCHAL", country:"FRANCE", flag:"🇫🇷", title:"ETS Paris", img:"images/player6.jpg", accomplishments:["2nd ETS Paris '25"], credit:"📸 Instagram"},
+    {id:7, revealed:true, name:"KASIMIR NERAD", country:"GERMANY", flag:"🇩🇪", title:"German Champion", img:"images/player7.jpg", accomplishments:["German Champion '25"], credit:"📸 Ruwen Schröder / Roundnet Germany"},
+    {id:8, revealed:true, name:"TIM BICHLER", country:"GERMANY", flag:"🇩🇪", title:"German Champion", img:"images/player8.jpg", accomplishments:["German Champion '25"], credit:"📸 Ruwen Schröder / Roundnet Germany"},
+    {id:9, revealed:true, name:"JONAS TARNUTZER", country:"SWITZERLAND", flag:"🇨🇭", title:"Swiss National Team", img:"images/player9.jpg", accomplishments:["Swiss National Player", "3rd at Euros '25"]},
+    // TEO KUKULJAN - swap in when image available:
+    // {id:9, revealed:true, name:"TEO KUKULJAN", country:"SWITZERLAND", flag:"🇨🇭", title:"TBA", img:"images/player9.jpg", accomplishments:[]},
+  ];
+  const flippedThisSession = new Set();
+  let audioCtx;
+  function playFlipSound() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const t = audioCtx.currentTime;
+    const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.25, audioCtx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const bp = audioCtx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.setValueAtTime(1000, t);
+    bp.frequency.exponentialRampToValueAtTime(400, t + 0.2);
+    bp.Q.value = 1;
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.35, t);
+    g.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
+    src.connect(bp); bp.connect(g); g.connect(audioCtx.destination);
+    src.start(t);
+    const osc = audioCtx.createOscillator();
+    const og = audioCtx.createGain();
+    osc.frequency.setValueAtTime(600, t);
+    osc.frequency.exponentialRampToValueAtTime(200, t + 0.15);
+    og.gain.setValueAtTime(0.08, t);
+    og.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
+    osc.connect(og); og.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + 0.2);
+  }
+  function populateAccomplishments(player) {
+    document.getElementById('bigAccomplishments').innerHTML = (player.accomplishments||[]).map(a => '<span class="big-accom-tag">'+a+'</span>').join('');
+  }
+  const grid = document.getElementById('rosterGrid');
+  PLAYERS.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'mini-card';
+    card.id = 'mini-' + p.id;
+    card.innerHTML = `
+      <div class="mini-pattern"></div>
+      <div class="mini-badge">FRESH 26</div>
+      <img class="mini-spike-icon" src="${SPIKE_ICON}" alt="">
+      <div class="mini-question">?</div>
+      <div class="mini-label">${p.revealed ? 'TAP TO REVEAL' : 'COMING SOON'}</div>
+      <div class="mini-number">#${p.id.toString().padStart(2,'0')}</div>
+      <div class="mini-thumb">
+        ${p.img ? '<img src="'+p.img+'" alt="">' : ''}
+        <div class="mini-thumb-name">${p.name||''}</div>
+        <div class="mini-thumb-flag">${p.flag||''}</div>
+      </div>
+    `;
+    card.onclick = () => openCard(p);
+    grid.appendChild(card);
+  });
+  let currentPlayer = null;
+  let bigFlipped = false;
+  function openCard(player) {
+    currentPlayer = player;
+    const bc = document.getElementById('bigCard');
+    if (flippedThisSession.has(player.id)) {
+      bigFlipped = true;
+      bc.classList.add('flipped');
+      bc.classList.remove('do-flash','show-not-yet');
+      document.getElementById('bigNum').textContent = '#' + player.id.toString().padStart(2,'0');
+      document.getElementById('bigImg').src = player.img;
+      document.getElementById('bigFlag').textContent = player.flag;
+      document.getElementById('bigCountry').textContent = player.country;
+      document.getElementById('bigName').textContent = player.name;
+      document.getElementById('bigTitle').textContent = player.title;
+
+      populateAccomplishments(player);
+      document.getElementById('bigCredit').textContent = player.credit || '';
+      document.getElementById('overlay').classList.add('active');
+      return;
+    }
+    bigFlipped = false;
+    bc.classList.remove('flipped','do-flash','show-not-yet');
+    document.getElementById('bigNum').textContent = '#' + player.id.toString().padStart(2,'0');
+    if (player.revealed && player.img) {
+      document.getElementById('bigImg').src = player.img;
+      document.getElementById('bigFlag').textContent = player.flag;
+      document.getElementById('bigCountry').textContent = player.country;
+      document.getElementById('bigName').textContent = player.name;
+      document.getElementById('bigTitle').textContent = player.title;
+
+      populateAccomplishments(player);
+      document.getElementById('bigCredit').textContent = player.credit || '';
+    }
+    document.getElementById('overlay').classList.add('active');
+    if (!player.revealed) {
+      setTimeout(() => { bc.classList.add('show-not-yet'); }, 600);
+    }
+  }
+  function flipBig() {
+    if (bigFlipped) return;
+    if (!currentPlayer || !currentPlayer.revealed) return;
+    bigFlipped = true;
+    const bc = document.getElementById('bigCard');
+    bc.classList.add('flipped','do-flash');
+    try { playFlipSound(); } catch(e) {}
+    setTimeout(() => {
+      const miniCard = document.getElementById('mini-' + currentPlayer.id);
+      miniCard.classList.add('revealed-mini','reveal-anim');
+      flippedThisSession.add(currentPlayer.id);
+    }, 900);
+  }
+  function closeOverlay() {
+    document.getElementById('overlay').classList.remove('active');
+    document.getElementById('bigCard').classList.remove('show-not-yet');
+    currentPlayer = null;
+    bigFlipped = false;
+  }
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeOverlay() });
+  document.getElementById('overlay').addEventListener('click', e => {
+    if(e.target===document.getElementById('overlay')) closeOverlay();
+  });
+  const pc = document.getElementById('particles');
+  for(let i=0;i<25;i++){
+    const p=document.createElement('div');p.className='particle';
+    p.style.left=Math.random()*100+'%';
+    p.style.animationDuration=(8+Math.random()*12)+'s';
+    p.style.animationDelay=(Math.random()*10)+'s';
+    p.style.setProperty('--drift',(Math.random()*60-30)+'px');
+    p.style.width=(1+Math.random()*2)+'px';p.style.height=p.style.width;
+    if(Math.random()>.7)p.style.background='#ffaa00';
+    pc.appendChild(p);
+  }
+  // Countdown to March 6, 2026 3:00 PM CET (Mallorca)
+  const REVEAL_DATE = new Date('2026-03-06T15:00:00+01:00');
+  function updateCountdown() {
+    const now = new Date();
+    const diff = REVEAL_DATE - now;
+    if (diff <= 0) {
+      document.getElementById('countdown').innerHTML = '<div class="countdown-done">REVEALS ARE LIVE</div>';
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cd-days').textContent = d.toString().padStart(2, '0');
+    document.getElementById('cd-hours').textContent = h.toString().padStart(2, '0');
+    document.getElementById('cd-mins').textContent = m.toString().padStart(2, '0');
+    document.getElementById('cd-secs').textContent = s.toString().padStart(2, '0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>
