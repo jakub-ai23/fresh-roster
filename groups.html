@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRESH 26 — Training Groups</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e0e0e0; min-height: 100vh; padding: 16px; }
+  h1 { text-align: center; font-size: 1.6rem; margin-bottom: 4px; color: #fff; }
+  .subtitle { text-align: center; font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+  .legend { display: flex; gap: 16px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #aaa; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+  .toolbar { display: flex; gap: 10px; justify-content: center; margin-bottom: 16px; }
+  .toolbar button { background: #2a2d3a; color: #ccc; border: 1px solid #444; border-radius: 6px; padding: 6px 14px; font-size: 0.75rem; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .toolbar button:hover { background: #3a3d4a; color: #fff; }
+  .board { display: flex; gap: 12px; min-height: calc(100vh - 160px); }
+  .column { flex: 1; background: #1a1d27; border-radius: 12px; padding: 12px; min-width: 200px; display: flex; flex-direction: column; }
+  .column.unassigned { max-width: 260px; background: #1a1a2e; }
+  .column-header { font-weight: 700; font-size: 1rem; margin-bottom: 4px; text-align: center; color: #fff; }
+  .column-count { text-align: center; font-size: 0.75rem; color: #666; margin-bottom: 8px; }
+  .column-notes { width: 100%; background: #1e2030; border: 1px solid #333; border-radius: 6px; color: #ccc; font-size: 0.75rem; padding: 6px 8px; resize: vertical; min-height: 36px; margin-bottom: 10px; font-family: inherit; }
+  .column-notes::placeholder { color: #555; }
+  .column-cards { flex: 1; min-height: 60px; }
+  .column.drag-over { background: #252840; }
+  .card { background: #252830; border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; cursor: grab; border-left: 4px solid #555; transition: transform 0.1s, box-shadow 0.1s; position: relative; }
+  .card:active { cursor: grabbing; }
+  .card.dragging { opacity: 0.4; transform: scale(0.95); }
+  .card-name { font-weight: 600; font-size: 0.85rem; }
+  .card-meta { font-size: 0.7rem; color: #888; margin-top: 2px; }
+  .card-wish { font-size: 0.65rem; color: #6a6aaa; margin-top: 3px; font-style: italic; }
+  .card-flag { position: absolute; top: 6px; right: 8px; font-size: 0.65rem; font-weight: 700; }
+  .flag-question { color: #f5a623; }
+  .card.pro-m { border-left-color: #4a9eff; }
+  .card.pro-w { border-left-color: #ff6eb4; }
+  .card.contender-m { border-left-color: #4ac29a; }
+  .card.contender-w { border-left-color: #f093fb; }
+  .card.intermediate { border-left-color: #888; }
+  .self-badge { display: inline-block; background: #333; border-radius: 4px; padding: 1px 5px; font-size: 0.65rem; margin-left: 6px; color: #ccc; }
+  .self-badge.s1 { background: #2d4a1e; color: #8eff6a; }
+  .self-badge.s2 { background: #3a4a1e; color: #c8e66a; }
+  .self-badge.s3 { background: #4a3a1e; color: #e6c86a; }
+  .self-badge.s4 { background: #4a2a1e; color: #e6936a; }
+  .self-badge.s5 { background: #4a1e1e; color: #e66a6a; }
+  .coach-badge { display: inline-block; background: #1e3a4a; border-radius: 4px; padding: 1px 5px; font-size: 0.6rem; color: #6ac8e6; margin-left: 4px; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #4ac29a; color: #000; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 99; }
+  .toast.show { opacity: 1; }
+  @media (max-width: 900px) { .board { flex-wrap: wrap; } .column { min-width: 45%; } }
+</style>
+</head>
+<body>
+
+<h1>FRESH 26 — Training Week Groups</h1>
+<p class="subtitle">Drag & drop players between groups</p>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#4a9eff"></div> Pro Men</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ff6eb4"></div> Pro Women</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4ac29a"></div> Contender Men</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f093fb"></div> Contender Women</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#888"></div> Intermediate</div>
+</div>
+<div class="toolbar">
+  <button onclick="saveState()">Save</button>
+  <button onclick="exportJSON()">Export JSON</button>
+  <button onclick="resetState()">Reset to Default</button>
+</div>
+
+<div class="board" id="board"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const players = [
+  // UNASSIGNED — Coaches
+  { name: "Pascal", div: "pro", gender: "m", self: null, wish: "", group: 0, tournaments: "?", coach: true },
+  { name: "Umut", div: "pro", gender: "m", self: null, wish: "", group: 0, tournaments: "?", coach: true },
+  { name: "Paq", div: "pro", gender: "m", self: null, wish: "", group: 0, tournaments: "?", coach: true },
+  { name: "Jonas Tarnutzer", div: "pro", gender: "m", self: 1, wish: "Jonathan Harder", group: 0, tournaments: "25+", coach: true },
+
+  // GROUP 1 — Pro
+  { name: "Cedric", div: "pro", gender: "m", self: null, wish: "", group: 1, tournaments: "?", coach: true },
+  { name: "Lina Günther", div: "pro", gender: "w", self: 1, wish: "Best group", group: 1, tournaments: "25+", coach: true },
+  { name: "Lauma Ernestsone", div: "pro", gender: "w", self: 1, wish: "Aleks Juska", group: 1, tournaments: "25+" },
+  { name: "Paul Volle", div: "pro", gender: "m", self: 1, wish: "Best of the best", group: 1, tournaments: "25+" },
+  { name: "Franziska Stadler", div: "pro", gender: "w", self: 1, wish: "", group: 1, tournaments: "25+" },
+  { name: "Karl Wolf", div: "contender", gender: "m", self: 1, wish: "Franzi Stadler", group: 1, tournaments: "25+" },
+  { name: "Aleksandrs Juska", div: "pro", gender: "m", self: 1, wish: "Lauma Ernestsone", group: 1, tournaments: "25+" },
+  { name: "Lucas Christiani", div: "pro", gender: "m", self: 1, wish: "Kasi, Tim Bichler", group: 1, tournaments: "25+" },
+  { name: "Thibaud Brun", div: "pro", gender: "m", self: 1, wish: "Louis Mareschal", group: 1, tournaments: "25+" },
+  { name: "Jonathan Harder", div: "pro", gender: "m", self: 1, wish: "Lucas Christiani", group: 1, tournaments: "25+" },
+  { name: "Tim Bichler", div: "pro", gender: "m", self: 1, wish: "Kasi", group: 1, tournaments: "25+" },
+  { name: "Kasimir Nerad", div: "pro", gender: "m", self: 1, wish: "Tim Bichler, Joni, Christiani", group: 1, tournaments: "25+" },
+  { name: "Louis Mareschal", div: "pro", gender: "m", self: 1, wish: "Thibaud Brun, Svenja (mixed)", group: 1, tournaments: "25+" },
+  { name: "Kyle Fowler", div: "pro", gender: "m", self: 1, wish: "", group: 1, tournaments: "25+" },
+  { name: "Svenja Kühner", div: "pro", gender: "w", self: 1, wish: "Lina Günther, Franzi Stadler", group: 1, tournaments: "25+" },
+  { name: "Teo Kukuljan", div: "pro", gender: "m", self: 1, wish: "", group: 1, tournaments: "25+" },
+
+  // GROUP 2 — Pro/High Contender
+  { name: "Jeroen Brus", div: "pro", gender: "m", self: 1, wish: "Teo Kukuljan", group: 2, tournaments: "25+" },
+  { name: "Christian M. Brødsgaard", div: "contender", gender: "m", self: 1, wish: "Aleksandrs Juska", group: 2, tournaments: "25+" },
+  { name: "Pieter-Jan Zwaan", div: "contender", gender: "m", self: 2, wish: "", group: 2, tournaments: "25+" },
+  { name: "Yanis Bouchemoua", div: "pro", gender: "m", self: 1, wish: "", group: 2, tournaments: "25+" },
+  { name: "Maxime Dumargne", div: "pro", gender: "m", self: 4, wish: "", group: 2, flag: "?", tournaments: "25+" },
+  { name: "Asbjørn Ditlev", div: "contender", gender: "m", self: 2, wish: "Any Danes", group: 2, tournaments: "5-15" },
+  { name: "Marek Szymański", div: "contender", gender: "m", self: 5, wish: "Open to everyone", group: 2, tournaments: "25+" },
+  { name: "Sam Bunze", div: "contender", gender: "m", self: 2, wish: "Best of the best", group: 2, tournaments: "25+" },
+  { name: "Nicolas Perriraz", div: "pro", gender: "m", self: 1, wish: "", group: 2, tournaments: "25+" },
+  { name: "Oussama Tchita", div: "pro", gender: "m", self: 1, wish: "Not picky", group: 2, tournaments: "15-25" },
+  { name: "Liv Sepstrup", div: "pro", gender: "w", self: 1, wish: "Lower part of pro", group: 2, tournaments: "15-25" },
+  { name: "Daniel Schürholz", div: "contender", gender: "m", self: 2, wish: "No preferences", group: 2, tournaments: "25+" },
+
+  // GROUP 3 — Contender
+  { name: "Tosca Pecorino", div: "pro", gender: "w", self: 3, wish: "", group: 3, tournaments: "25+" },
+  { name: "Mads Overgaard Jensen", div: "contender", gender: "m", self: 3, wish: "Sweet people", group: 3, tournaments: "5-15" },
+  { name: "Rudo Brus", div: "contender", gender: "m", self: 3, wish: "", group: 3, tournaments: "25+" },
+  { name: "Erik Scheland", div: "contender", gender: "m", self: 3, wish: "", group: 3, tournaments: "5-15" },
+  { name: "Anne Søgaard Kristensen", div: "contender", gender: "w", self: 3, wish: "Mads Overgaard", group: 3, tournaments: "15-25" },
+  { name: "Tim Hardenacke", div: "contender", gender: "m", self: 3, wish: "Marvin Koch", group: 3, tournaments: "5-15" },
+  { name: "Andreas Serov", div: "contender", gender: "m", self: 3, wish: "Erik Scheland, Daniel Schürholz", group: 3, tournaments: "15-25" },
+  { name: "Marthe Michielsen", div: "contender", gender: "w", self: 4, wish: "Lieze Dockx", group: 3, tournaments: "15-25" },
+  { name: "Mie Korsholt", div: "contender", gender: "w", self: 4, wish: "Anne Søgaard", group: 3, tournaments: "15-25" },
+  { name: "Marvin Koch", div: "contender", gender: "m", self: 3, wish: "Tim Hardenacke", group: 3, tournaments: "15-25" },
+  { name: "Pieterjan Uytterhoeven", div: "contender", gender: "m", self: 3, wish: "Pieter-Jan Zwaan", group: 3, tournaments: "0-5" },
+  { name: "Frederik Rall", div: "contender", gender: "m", self: 3, wish: "", group: 3, tournaments: "15-25" },
+
+  // GROUP 4 — Contender/Intermediate
+  { name: "Lieze Dockx", div: "contender", gender: "w", self: 3, wish: "Marthe Michielsen", group: 4, tournaments: "5-15" },
+  { name: "Selina Bachmann", div: "contender", gender: "w", self: 4, wish: "", group: 4, tournaments: "25+" },
+  { name: "Sajid Anower", div: "contender", gender: "m", self: 5, wish: "Marcos Nieto, Ugo de Checchi", group: 4, tournaments: "5-15" },
+  { name: "Klaudia Radwańska", div: "contender", gender: "w", self: 4, wish: "No preference", group: 4, tournaments: "0-5" },
+  { name: "Kamil Kowalewski", div: "contender", gender: "m", self: 5, wish: "", group: 4, tournaments: "0-5" },
+  { name: "Alois Trondl", div: "contender", gender: "m", self: 5, wish: "", group: 4, tournaments: "0-5" },
+  { name: "Lidia Popa", div: "contender", gender: "w", self: 3, wish: "Austrians/Romanians", group: 4, tournaments: "0-5" },
+  { name: "Roos van der Donk", div: "contender", gender: "w", self: 4, wish: "Teodora Veres", group: 4, tournaments: "15-25" },
+  { name: "Teodora Veres", div: "contender", gender: "w", self: 4, wish: "No preference", group: 4, tournaments: "15-25" },
+  { name: "Christoph Hochrein", div: "intermediate", gender: "m", self: 5, wish: "", group: 4, tournaments: "0-5" },
+  { name: "Chiara Németh", div: "contender", gender: "w", self: 5, wish: "No preference", group: 4, tournaments: "15-25" },
+  { name: "Toni", div: "intermediate", gender: "m", self: null, wish: "", group: 4, tournaments: "?" },
+];
+
+const columns = [
+  { id: 0, label: "Unassigned", sidebar: true },
+  { id: 1, label: "Group 1 — Pro" },
+  { id: 2, label: "Group 2 — Pro/High Contender" },
+  { id: 3, label: "Group 3 — Contender" },
+  { id: 4, label: "Group 4 — Contender/Intermediate" },
+];
+
+function getCardClass(p) {
+  if (p.div === "intermediate") return "intermediate";
+  return `${p.div}-${p.gender}`;
+}
+
+function updateCounts() {
+  columns.forEach(col => {
+    const cards = document.querySelectorAll(`#col-${col.id} .card`);
+    const count = cards.length;
+    const proM = [...cards].filter(c => c.dataset.class === "pro-m").length;
+    const proW = [...cards].filter(c => c.dataset.class === "pro-w").length;
+    const conM = [...cards].filter(c => c.dataset.class === "contender-m").length;
+    const conW = [...cards].filter(c => c.dataset.class === "contender-w").length;
+    const inter = [...cards].filter(c => c.dataset.class === "intermediate").length;
+    const el = document.getElementById(`count-${col.id}`);
+    let parts = [`${count} players`];
+    if (proM || proW) parts.push(`Pro: ${proM}M ${proW}W`);
+    if (conM || conW) parts.push(`Con: ${conM}M ${conW}W`);
+    if (inter) parts.push(`Int: ${inter}`);
+    el.textContent = parts.join(" · ");
+  });
+}
+
+function createCard(p, idx) {
+  const card = document.createElement("div");
+  const cls = getCardClass(p);
+  card.className = `card ${cls}`;
+  card.draggable = true;
+  card.dataset.idx = idx;
+  card.dataset.class = cls;
+  let html = `<div class="card-name">${p.name}`;
+  if (p.self !== null) html += `<span class="self-badge s${p.self}">${p.self}</span>`;
+  if (p.coach) html += `<span class="coach-badge">COACH</span>`;
+  html += `</div>`;
+  html += `<div class="card-meta">${p.div.charAt(0).toUpperCase() + p.div.slice(1)} · ${p.gender === 'w' ? 'Woman' : 'Man'} · ${p.tournaments} tournaments</div>`;
+  if (p.wish) html += `<div class="card-wish">&rarr; ${p.wish}</div>`;
+  if (p.flag) html += `<div class="card-flag flag-question">?</div>`;
+  card.innerHTML = html;
+  card.addEventListener("dragstart", e => {
+    card.classList.add("dragging");
+    e.dataTransfer.setData("text/plain", idx);
+    e.dataTransfer.effectAllowed = "move";
+  });
+  card.addEventListener("dragend", () => card.classList.remove("dragging"));
+  return card;
+}
+
+function getDragAfterElement(container, y) {
+  const els = [...container.querySelectorAll(".card:not(.dragging)")];
+  return els.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) return { offset, element: child };
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function getCurrentState() {
+  const state = { groups: {}, notes: {} };
+  columns.forEach(col => {
+    const cards = document.querySelectorAll(`#col-${col.id} .column-cards .card`);
+    state.groups[col.id] = [...cards].map(c => parseInt(c.dataset.idx));
+    const notes = document.getElementById(`notes-${col.id}`);
+    if (notes) state.notes[col.id] = notes.value;
+  });
+  return state;
+}
+
+function applyState(state) {
+  columns.forEach(col => {
+    const container = document.querySelector(`#col-${col.id} .column-cards`);
+    if (state.groups[col.id]) {
+      state.groups[col.id].forEach(idx => {
+        const card = document.querySelector(`.card[data-idx="${idx}"]`);
+        if (card) container.appendChild(card);
+      });
+    }
+    if (state.notes && state.notes[col.id]) {
+      const notes = document.getElementById(`notes-${col.id}`);
+      if (notes) notes.value = state.notes[col.id];
+    }
+  });
+  updateCounts();
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2000);
+}
+
+function saveState() {
+  localStorage.setItem("fresh26-groups", JSON.stringify(getCurrentState()));
+  showToast("Saved!");
+}
+
+function exportJSON() {
+  const state = {};
+  columns.forEach(col => {
+    const cards = document.querySelectorAll(`#col-${col.id} .column-cards .card`);
+    state[col.label] = [...cards].map(c => players[parseInt(c.dataset.idx)].name);
+  });
+  navigator.clipboard.writeText(JSON.stringify(state, null, 2));
+  showToast("Copied to clipboard!");
+}
+
+function resetState() {
+  localStorage.removeItem("fresh26-groups");
+  location.reload();
+}
+
+function buildBoard() {
+  const board = document.getElementById("board");
+  board.innerHTML = "";
+  columns.forEach(col => {
+    const column = document.createElement("div");
+    column.className = `column${col.sidebar ? ' unassigned' : ''}`;
+    column.id = `col-${col.id}`;
+    column.innerHTML = `<div class="column-header">${col.label}</div><div class="column-count" id="count-${col.id}"></div><textarea class="column-notes" placeholder="Notes..." id="notes-${col.id}"></textarea>`;
+    const cardsDiv = document.createElement("div");
+    cardsDiv.className = "column-cards";
+    cardsDiv.dataset.group = col.id;
+    cardsDiv.addEventListener("dragover", e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      column.classList.add("drag-over");
+      const afterEl = getDragAfterElement(cardsDiv, e.clientY);
+      const dragging = document.querySelector(".dragging");
+      if (!dragging) return;
+      afterEl == null ? cardsDiv.appendChild(dragging) : cardsDiv.insertBefore(dragging, afterEl);
+    });
+    cardsDiv.addEventListener("dragleave", () => column.classList.remove("drag-over"));
+    cardsDiv.addEventListener("drop", e => {
+      e.preventDefault();
+      column.classList.remove("drag-over");
+      const idx = e.dataTransfer.getData("text/plain");
+      const card = document.querySelector(`.card[data-idx="${idx}"]`);
+      if (card && !cardsDiv.contains(card)) {
+        const afterEl = getDragAfterElement(cardsDiv, e.clientY);
+        afterEl == null ? cardsDiv.appendChild(card) : cardsDiv.insertBefore(card, afterEl);
+      }
+      players[idx].group = col.id;
+      updateCounts();
+    });
+    column.appendChild(cardsDiv);
+    board.appendChild(column);
+  });
+
+  players.forEach((p, idx) => {
+    const card = createCard(p, idx);
+    const target = document.querySelector(`#col-${p.group} .column-cards`);
+    if (target) target.appendChild(card);
+  });
+  updateCounts();
+
+  // Restore saved state if exists
+  const saved = localStorage.getItem("fresh26-groups");
+  if (saved) {
+    try { applyState(JSON.parse(saved)); } catch(e) {}
+  }
+}
+
+buildBoard();
+</script>
+</body>
+</html>

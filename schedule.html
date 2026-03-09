@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRESH 26 — Weekly Schedule</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+  :root {
+    --blue: #00B4E3;
+    --lila: #D856B0;
+    --purple: #4a148c;
+    --orange: #FF9800;
+    --dark: #1a1a2e;
+    --green: #4ac29a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Montserrat', sans-serif; background: #f3f4f6; color: #333; }
+
+  .hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #4a148c 60%, #00B4E3 100%);
+    padding: 40px 20px 30px;
+    text-align: center;
+  }
+  .hero img { height: 50px; margin-bottom: 10px; }
+  .hero h1 { color: white; font-size: 2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
+  .hero .sub { color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 4px; }
+
+  .container { max-width: 700px; margin: 0 auto; padding: 20px; }
+
+  /* Meals bar */
+  .meals-bar {
+    display: flex; gap: 12px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .meal-chip {
+    background: white; border-radius: 8px; padding: 8px 16px; font-size: 0.75rem; font-weight: 700;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 6px;
+  }
+  .meal-chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-breakfast { background: var(--orange); }
+  .dot-dinner { background: var(--purple); }
+  .dot-yoga { background: var(--lila); }
+
+  /* Day cards */
+  .day-card {
+    background: white; border-radius: 12px; margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden;
+  }
+  .day-header {
+    padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .day-header h2 { font-size: 1rem; font-weight: 800; text-transform: uppercase; color: white; }
+  .day-header .date { font-size: 0.75rem; color: rgba(255,255,255,0.8); font-weight: 600; }
+  .day-mon .day-header { background: linear-gradient(135deg, var(--purple), var(--blue)); }
+  .day-tue .day-header { background: linear-gradient(135deg, var(--blue), var(--green)); }
+  .day-wed .day-header { background: linear-gradient(135deg, var(--orange), var(--lila)); }
+  .day-thu .day-header { background: linear-gradient(135deg, var(--green), var(--blue)); }
+  .day-fri .day-header { background: linear-gradient(135deg, var(--lila), var(--purple)); }
+
+  .day-body { padding: 16px 20px; }
+
+  .time-row {
+    display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f0f0f0; align-items: flex-start;
+  }
+  .time-row:last-child { border-bottom: none; }
+  .time-label {
+    min-width: 110px; font-size: 0.8rem; font-weight: 700; color: var(--purple); padding-top: 2px;
+  }
+  .time-content { flex: 1; font-size: 0.82rem; line-height: 1.5; }
+  .time-content .sub-detail { color: #888; font-size: 0.72rem; margin-top: 2px; }
+
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 0.65rem; font-weight: 700; color: white; vertical-align: middle;
+  }
+  .b-training { background: var(--blue); }
+  .b-clinic { background: var(--lila); }
+  .b-yoga { background: var(--lila); opacity: 0.7; }
+  .b-meal { background: var(--orange); }
+  .b-special { background: var(--green); }
+  .b-trip { background: var(--purple); }
+
+  /* Clinic detail boxes */
+  .clinic-grid { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+  .clinic-box {
+    flex: 1; min-width: 200px; border-radius: 8px; padding: 10px 14px;
+    font-size: 0.75rem; border-left: 4px solid;
+  }
+  .clinic-serving { background: #f0faff; border-color: var(--blue); }
+  .clinic-hitting { background: #fdf0ff; border-color: var(--lila); }
+  .clinic-box strong { display: block; margin-bottom: 4px; font-size: 0.8rem; }
+  .clinic-box .coaches { color: #666; }
+  .clinic-box .groups { color: var(--purple); font-weight: 600; margin-top: 2px; }
+
+  .footer { text-align: center; padding: 20px; color: #aaa; font-size: 0.7rem; }
+
+  @media print {
+    body { background: white; }
+    .day-card { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+    .hero { padding: 20px; }
+  }
+  @media (max-width: 600px) {
+    .time-row { flex-direction: column; gap: 2px; }
+    .time-label { min-width: auto; }
+    .clinic-grid { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img src="images/Logo_FR_white2.png" alt="FRESH">
+  <h1>Weekly Schedule</h1>
+  <div class="sub">FRESH 26 — Mallorca, March 9–13, 2026</div>
+</div>
+
+<div class="container">
+
+  <!-- Meals bar -->
+  <div class="meals-bar">
+    <div class="meal-chip"><span class="dot dot-breakfast"></span> Breakfast 8:00–9:00</div>
+    <div class="meal-chip"><span class="dot dot-dinner"></span> Dinner 18:00–20:45</div>
+    <div class="meal-chip"><span class="dot dot-yoga"></span> Yoga 18:30 (Mon–Thu)</div>
+  </div>
+
+  <!-- MONDAY -->
+  <div class="day-card day-mon">
+    <div class="day-header">
+      <h2>Monday — Official Start</h2>
+      <div class="date">9 March</div>
+    </div>
+    <div class="day-body">
+      <div class="time-row">
+        <div class="time-label">09:00</div>
+        <div class="time-content"><span class="badge b-special">Recovery</span> Recovery session (morning)</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">13:30</div>
+        <div class="time-content"><span class="badge b-special">Women</span> Lina's women's meetup — speech + warm-up together</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">14:00</div>
+        <div class="time-content"><span class="badge b-training">Start</span> Official start by Jakub — welcome, intro, logistics</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">14:00–14:30</div>
+        <div class="time-content">Joint warm-up, all groups together</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">14:30–16:30</div>
+        <div class="time-content"><span class="badge b-training">Training</span> Split into groups — Setting, Social Play
+          <div class="sub-detail">After 1h: Women → Lina | Beginners + G3 → Cedric | G1 + G2 → merge for pickup</div>
+        </div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">18:30</div>
+        <div class="time-content"><span class="badge b-yoga">Yoga</span> Yoga session</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TUESDAY -->
+  <div class="day-card day-tue">
+    <div class="day-header">
+      <h2>Tuesday — Serving & Hitting</h2>
+      <div class="date">10 March</div>
+    </div>
+    <div class="day-body">
+      <div class="time-row">
+        <div class="time-label">09:30–12:00</div>
+        <div class="time-content"><span class="badge b-training">Training</span> Serving, Serve Receive (per group)</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">14:15–17:45</div>
+        <div class="time-content"><span class="badge b-clinic">Clinics</span> Cross-group clinics
+          <div class="clinic-grid">
+            <div class="clinic-box clinic-serving">
+              <strong>Serving Clinic</strong>
+              <div class="coaches">Coaches: Umut + Jonathan</div>
+              <div class="groups">Groups: G1 (Paq's) + G2 (Pascal's)</div>
+            </div>
+            <div class="clinic-box clinic-hitting">
+              <strong>Hitting Clinic</strong>
+              <div class="coaches">Coaches: Paq + Kyle</div>
+              <div class="groups">Groups: G3 (Umut's) + G4 (Cedric/Jonas's)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">18:30</div>
+        <div class="time-content"><span class="badge b-yoga">Yoga</span> Yoga session</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEDNESDAY -->
+  <div class="day-card day-wed">
+    <div class="day-header">
+      <h2>Wednesday — Squad Tournament</h2>
+      <div class="date">11 March</div>
+    </div>
+    <div class="day-body">
+      <div class="time-row">
+        <div class="time-label">09:30–12:00</div>
+        <div class="time-content"><span class="badge b-special">Tournament</span> Internal squad tournament — full day event</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">14:15–17:45</div>
+        <div class="time-content"><span class="badge b-special">Tournament</span> Squad tournament continued</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">18:30</div>
+        <div class="time-content"><span class="badge b-yoga">Yoga</span> Yoga session</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THURSDAY -->
+  <div class="day-card day-thu">
+    <div class="day-header">
+      <h2>Thursday — Defense & Clinics</h2>
+      <div class="date">12 March</div>
+    </div>
+    <div class="day-body">
+      <div class="time-row">
+        <div class="time-label">09:30–12:00</div>
+        <div class="time-content"><span class="badge b-training">Training</span> Defense (per group)</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">14:15–17:45</div>
+        <div class="time-content"><span class="badge b-clinic">Clinics</span> Cross-group clinics — groups swap
+          <div class="clinic-grid">
+            <div class="clinic-box clinic-hitting">
+              <strong>Hitting Clinic</strong>
+              <div class="coaches">Coaches: Paq + Kyle</div>
+              <div class="groups">Groups: G1 (Paq's) + G2 (Pascal's)</div>
+            </div>
+            <div class="clinic-box clinic-serving">
+              <strong>Serving Clinic</strong>
+              <div class="coaches">Coaches: Umut + Jonathan</div>
+              <div class="groups">Groups: G3 (Umut's) + G4 (Cedric/Jonas's)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">18:30</div>
+        <div class="time-content"><span class="badge b-yoga">Yoga</span> Yoga session</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRIDAY -->
+  <div class="day-card day-fri">
+    <div class="day-header">
+      <h2>Friday — Training + Sóller Trip</h2>
+      <div class="date">13 March</div>
+    </div>
+    <div class="day-body">
+      <div class="time-row">
+        <div class="time-label">10:00–11:30</div>
+        <div class="time-content"><span class="badge b-training">Training</span> Setting (per group)</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">12:00–17:00</div>
+        <div class="time-content"><span class="badge b-trip">Field Trip</span> Sóller Trip — train through the mountains
+          <div class="sub-detail">€20 per person. Sign up required.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    FRESH 26 — Play Your Best. We Handle the Rest.<br>
+    futureroundnet.com
+  </div>
+
+</div>
+
+</body>
+</html>

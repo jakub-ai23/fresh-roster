@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+~$*
+*.pdf
+*.xlsx
+*.png
+!images/*.png
+!images/*.jpg
+!images/*.jpeg
+claude-code-tools-research.md

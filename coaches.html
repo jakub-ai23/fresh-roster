@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRESH 26 — Coach Assignment</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+  :root {
+    --brand-blue: #00B4E3;
+    --brand-lila: #D856B0;
+    --col-tourney: #3949AB;
+    --col-arrival: #AED581;
+    --col-pickup: #00897B;
+    --col-food: #CFD8DC;
+    --col-lunch: #ECEFF1;
+    --col-break: #F3F4F6;
+    --col-trip: #FF9800;
+    --col-recov: #90A4AE;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Montserrat', sans-serif; background: #F3F4F6; margin: 0; padding: 20px; }
+
+  /* ===== SCHEDULE SECTION ===== */
+  .schedule-container { max-width: 100%; overflow-x: auto; padding-bottom: 20px; }
+
+  .schedule-grid {
+    display: grid;
+    grid-template-columns: minmax(140px, 1fr) repeat(8, minmax(140px, 1fr));
+    grid-template-rows: 80px 60px 40px 140px 40px 100px 70px 40px 50px 70px;
+    gap: 6px;
+    min-width: 1200px;
+  }
+
+  .main-header-block {
+    grid-column: 1 / -1; text-align: center; background: white;
+    padding: 15px; border-radius: 6px; margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+  .main-header-block h1 { margin: 0; color: #4a148c; text-transform: uppercase; font-weight: 800; font-size: 1.8rem; }
+
+  .day-header {
+    background: white; text-align: center; padding: 5px; border-radius: 4px;
+    display: flex; flex-direction: column; justify-content: center;
+    font-size: 0.9rem; color: #37474F; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .day-name { font-weight: 800; text-transform: uppercase; }
+  .day-date { font-size: 0.75rem; color: var(--brand-blue); font-weight: 600; }
+
+  .block {
+    border-radius: 4px; color: white; text-align: center;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 5px; font-size: 0.85rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .time { font-size: 0.65rem; font-weight: 700; opacity: 0.9; margin-bottom: 2px; text-transform: uppercase; background: rgba(0,0,0,0.1); padding: 1px 5px; border-radius: 4px; }
+  .activity { font-weight: 700; line-height: 1.2; }
+  .sub-text { font-size: 0.7rem; margin-top: 3px; font-weight: 400; opacity: 0.95; }
+
+  .bg-arrival { background: var(--col-arrival); color: #33691E; }
+  .bg-blue { background: var(--brand-blue); }
+  .bg-lila { background: var(--brand-lila); }
+  .bg-tourney { background: var(--col-tourney); }
+  .bg-pickup { background: var(--col-pickup); }
+  .bg-food { background: var(--col-food); color: #37474F; font-weight: 700; font-size: 0.75rem; }
+  .bg-lunch { background: var(--col-lunch); color: #546E7A; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+  .bg-break { background: transparent; border: 1px dashed #CFD8DC; color: #90A4AE; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; box-shadow: none; }
+  .bg-recov { background: var(--col-recov); }
+  .bg-trip { background: var(--col-trip); }
+
+  .r-days { grid-row: 2; }
+  .r-brekkie { grid-row: 3; }
+  .r-morn { grid-row: 4; }
+  .r-lunch { grid-row: 5; }
+  .r-after { grid-row: 6; }
+  .r-pickup { grid-row: 7; }
+  .r-sunset { grid-row: 8; }
+  .r-dinner { grid-row: 9; }
+  .r-social { grid-row: 10; }
+
+  .footer-notes {
+    margin-top: 20px; padding: 15px; background: white; border-radius: 6px;
+    color: #455A64; font-size: 0.85rem; line-height: 1.5; text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .footer-notes strong { color: var(--brand-blue); }
+
+  /* ===== DIVIDER ===== */
+  .section-divider {
+    margin: 30px 0 20px; text-align: center; position: relative;
+  }
+  .section-divider h2 {
+    display: inline-block; background: #F3F4F6; padding: 0 20px;
+    font-size: 1.4rem; color: #4a148c; text-transform: uppercase; position: relative; z-index: 1;
+  }
+  .section-divider::before {
+    content: ''; position: absolute; top: 50%; left: 0; right: 0;
+    height: 2px; background: #ddd;
+  }
+
+  /* ===== COACH BOARD ===== */
+  .coach-board { display: flex; gap: 14px; margin-top: 10px; }
+  .coach-col {
+    flex: 1; background: white; border-radius: 10px; padding: 14px;
+    min-height: 200px; display: flex; flex-direction: column;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .coach-col.unassigned { max-width: 180px; background: #EDE7F6; }
+  .coach-col-header {
+    font-weight: 800; font-size: 0.95rem; text-align: center; color: #4a148c;
+    margin-bottom: 4px; text-transform: uppercase;
+  }
+  .coach-col-count { text-align: center; font-size: 0.7rem; color: #999; margin-bottom: 8px; }
+  .coach-col-cards { flex: 1; min-height: 50px; }
+  .coach-col.drag-over { background: #E8EAF6; }
+
+  .coach-card {
+    background: linear-gradient(135deg, #4a148c, #7B1FA2);
+    border-radius: 8px; padding: 10px 14px; margin-bottom: 8px;
+    cursor: grab; color: white; font-weight: 700; font-size: 0.9rem;
+    text-align: center; box-shadow: 0 2px 6px rgba(74,20,140,0.3);
+    transition: transform 0.1s, box-shadow 0.15s;
+  }
+  .coach-card:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(74,20,140,0.4); }
+  .coach-card:active { cursor: grabbing; }
+  .coach-card.dragging { opacity: 0.4; transform: scale(0.95); }
+
+  .coach-notes {
+    width: 100%; background: #F5F5F5; border: 1px solid #E0E0E0; border-radius: 6px;
+    color: #555; font-size: 0.75rem; padding: 6px 8px; resize: vertical;
+    min-height: 36px; margin-top: auto; font-family: inherit;
+  }
+  .coach-notes::placeholder { color: #bbb; }
+
+  /* Toolbar */
+  .toolbar { display: flex; gap: 10px; justify-content: center; margin: 16px 0; }
+  .toolbar button { background: white; color: #4a148c; border: 2px solid #4a148c; border-radius: 6px; padding: 6px 16px; font-size: 0.75rem; cursor: pointer; font-family: inherit; font-weight: 700; transition: all 0.15s; }
+  .toolbar button:hover { background: #4a148c; color: white; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #4a148c; color: white; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 99; }
+  .toast.show { opacity: 1; }
+
+  /* Training day labels in schedule */
+  .training-groups {
+    font-size: 0.6rem; margin-top: 4px; opacity: 0.9; font-weight: 400;
+  }
+
+  /* ===== TRAINING TOPICS ===== */
+  .topics-board {
+    display: grid;
+    grid-template-columns: 160px repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .topic-slot {
+    background: white; border-radius: 8px; padding: 10px;
+    min-height: 80px; display: flex; flex-direction: column;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .topic-slot.pool { background: #E8F5E9; }
+  .topic-slot.drag-over { background: #E3F2FD; }
+  .topic-slot-header { font-weight: 700; font-size: 0.7rem; color: #4a148c; text-transform: uppercase; margin-bottom: 6px; text-align: center; }
+  .topic-slot-sub { font-size: 0.6rem; color: #999; text-align: center; margin-bottom: 6px; }
+  .topic-slot-cards { flex: 1; min-height: 30px; }
+
+  .topic-chip {
+    background: var(--brand-blue); color: white; border-radius: 6px;
+    padding: 6px 10px; margin-bottom: 5px; cursor: grab;
+    font-weight: 700; font-size: 0.75rem; text-align: center;
+    box-shadow: 0 2px 4px rgba(0,180,227,0.3);
+    transition: transform 0.1s;
+  }
+  .topic-chip:hover { transform: translateY(-1px); }
+  .topic-chip:active { cursor: grabbing; }
+  .topic-chip.dragging { opacity: 0.4; transform: scale(0.95); }
+  .topic-chip.t-setting { background: #00897B; }
+  .topic-chip.t-defense { background: #E53935; }
+  .topic-chip.t-hitting { background: #FB8C00; }
+  .topic-chip.t-serving { background: #5E35B1; }
+  .topic-chip.t-serve-receive { background: #1E88E5; }
+  .topic-chip.t-custom { background: #757575; }
+</style>
+</head>
+<body>
+
+<!-- ===== SCHEDULE ===== -->
+<div class="schedule-container">
+  <div class="schedule-grid">
+    <div class="main-header-block"><h1>Fresh 26 Schedule</h1></div>
+
+    <div class="day-header r-days">Fri<span class="day-date">6 Mar</span></div>
+    <div class="day-header r-days">Sat<span class="day-date">7 Mar</span></div>
+    <div class="day-header r-days">Sun<span class="day-date">8 Mar</span></div>
+    <div class="day-header r-days">Mon<span class="day-date">9 Mar</span></div>
+    <div class="day-header r-days">Tue<span class="day-date">10 Mar</span></div>
+    <div class="day-header r-days">Wed<span class="day-date">11 Mar</span></div>
+    <div class="day-header r-days">Thu<span class="day-date">12 Mar</span></div>
+    <div class="day-header r-days">Fri<span class="day-date">13 Mar</span></div>
+    <div class="day-header r-days">Sat<span class="day-date">14 Mar</span></div>
+
+    <div class="block bg-food r-brekkie" style="grid-column:2">BREKKIE</div>
+    <div class="block bg-food r-brekkie" style="grid-column:3">BREKKIE</div>
+    <div class="block bg-food r-brekkie" style="grid-column:4">BREKKIE</div>
+    <div class="block bg-food r-brekkie" style="grid-column:5">BREKKIE</div>
+    <div class="block bg-food r-brekkie" style="grid-column:6">BREKKIE</div>
+    <div class="block bg-food r-brekkie" style="grid-column:7">BREKKIE</div>
+    <div class="block bg-food r-brekkie" style="grid-column:8">BREKKIE</div>
+    <div class="block bg-food r-brekkie" style="grid-column:9">BREKKIE</div>
+
+    <div class="block bg-arrival r-morn" style="grid-column:1;grid-row:4/span 2;">
+      <span class="time">All Day</span><span class="activity">Arrival of Players</span>
+    </div>
+    <div class="block bg-tourney r-morn" style="grid-column:2;">
+      <span class="time">08:00 - 12:00</span><span class="activity">5th Mallorca Open</span><span class="sub-text">Sanctioned 🇪🇺</span>
+    </div>
+    <div class="block bg-tourney r-morn" style="grid-column:3;">
+      <span class="time">08:30 - 12:00</span><span class="activity">5th Mallorca Open</span><span class="sub-text">Sanctioned 🇪🇺</span>
+    </div>
+    <div class="block bg-recov r-morn" style="grid-column:4;">
+      <span class="time">09:00 - 12:00</span><span class="activity">Recovery</span>
+    </div>
+    <div class="block bg-blue r-morn" style="grid-column:5;">
+      <span class="time">09:30 - 12:30</span><span class="activity">Training</span>
+      <span class="training-groups">Groups 1-4</span>
+    </div>
+    <div class="block bg-blue r-morn" style="grid-column:6;">
+      <span class="time">09:30 - 12:30</span><span class="activity">Training</span>
+      <span class="training-groups">Groups 1-4</span>
+    </div>
+    <div class="block bg-blue r-morn" style="grid-column:7;">
+      <span class="time">09:30 - 12:30</span><span class="activity">Training</span>
+      <span class="training-groups">Groups 1-4</span>
+    </div>
+    <div class="block bg-blue r-morn" style="grid-column:8;">
+      <span class="time">09:30 - 12:30</span><span class="activity">Training</span>
+      <span class="training-groups">Groups 1-4</span>
+    </div>
+    <div class="block bg-tourney r-morn" style="grid-column:9;grid-row:4/span 5;">
+      <span class="time">All Day</span><span class="activity">🏐 Revol Beach<br>Tournament</span>
+    </div>
+
+    <div class="block bg-lunch r-lunch" style="grid-column:2">Lunch</div>
+    <div class="block bg-lunch r-lunch" style="grid-column:3">Lunch</div>
+    <div class="block bg-break r-lunch" style="grid-column:4">Break</div>
+    <div class="block bg-break r-lunch" style="grid-column:5">Break</div>
+    <div class="block bg-break r-lunch" style="grid-column:6">Break</div>
+    <div class="block bg-break r-lunch" style="grid-column:7">Break</div>
+    <div class="block bg-break r-lunch" style="grid-column:8">Break</div>
+
+    <div class="block bg-pickup r-after" style="grid-column:1;grid-row:6/span 2;">
+      <span class="time">14:00 - 18:00</span><span class="activity">Pre-Tourney<br>Pick Ups</span>
+    </div>
+    <div class="block bg-tourney r-after" style="grid-column:2;grid-row:6/span 3;">
+      <span class="time">13:00 - 19:00</span><span class="activity">Open / Women's Div</span><span class="sub-text">Sanctioned 🇪🇺</span>
+    </div>
+    <div class="block bg-tourney r-after" style="grid-column:3;grid-row:6/span 3;">
+      <span class="time">13:00 - 19:00</span><span class="activity">Mixed / 3v3</span><span class="sub-text">Sanctioned 🇪🇺</span>
+    </div>
+    <div class="block bg-blue r-after" style="grid-column:4;">
+      <span class="time">14:30 - 16:30</span><span class="activity">Training</span>
+      <span class="training-groups">Groups 1-4</span>
+    </div>
+    <div class="block bg-blue r-after" style="grid-column:5;">
+      <span class="time">14:30 - 16:30</span><span class="activity">Clinic</span>
+    </div>
+    <div class="block bg-trip r-after" style="grid-column:6;grid-row:6/span 3;">
+      <span class="time">Afternoon</span><span class="activity">Optional Tourney<br>or Sightseeing</span>
+    </div>
+    <div class="block bg-blue r-after" style="grid-column:7;">
+      <span class="time">14:30 - 16:30</span><span class="activity">Clinic</span>
+    </div>
+    <div class="block bg-trip r-after" style="grid-column:8;grid-row:6/span 3;">
+      <span class="time">13:30 - 17:30</span><span class="activity">Optional Trip</span><span class="sub-text">Sightseeing</span>
+    </div>
+
+    <div class="block bg-pickup r-pickup" style="grid-column:4;">
+      <span class="time">16:30 - 18:00</span><span class="activity">Pick Ups</span>
+    </div>
+    <div class="block bg-pickup r-pickup" style="grid-column:5;">
+      <span class="time">16:30 - 18:00</span><span class="activity">Pick Ups</span>
+    </div>
+    <div class="block bg-pickup r-pickup" style="grid-column:7;">
+      <span class="time">16:30 - 18:00</span><span class="activity">Pick Ups</span>
+    </div>
+
+    <div class="block bg-lila r-sunset" style="grid-column:1"><span class="activity">Sunset Chill</span></div>
+    <div class="block bg-lila r-sunset" style="grid-column:4"><span class="activity">Sunset Chill</span></div>
+    <div class="block bg-lila r-sunset" style="grid-column:5"><span class="activity">Sunset Chill</span></div>
+    <div class="block bg-lila r-sunset" style="grid-column:7"><span class="activity">Sunset Chill</span></div>
+
+    <div class="block bg-food r-dinner" style="grid-column:1">DINNER</div>
+    <div class="block bg-food r-dinner" style="grid-column:2">DINNER</div>
+    <div class="block bg-food r-dinner" style="grid-column:3">DINNER</div>
+    <div class="block bg-food r-dinner" style="grid-column:4">DINNER</div>
+    <div class="block bg-food r-dinner" style="grid-column:5">DINNER</div>
+    <div class="block bg-food r-dinner" style="grid-column:6">DINNER</div>
+    <div class="block bg-food r-dinner" style="grid-column:7">DINNER</div>
+    <div class="block bg-food r-dinner" style="grid-column:8">DINNER</div>
+    <div class="block bg-food r-dinner" style="grid-column:9">DINNER</div>
+
+    <div class="block bg-lila r-social" style="grid-column:1"><span class="time">21:30</span><span class="activity">Social</span></div>
+    <div class="block bg-lila r-social" style="grid-column:3"><span class="time">21:30</span><span class="activity">Tournament<br>Afterparty</span></div>
+    <div class="block bg-lila r-social" style="grid-column:4"><span class="time">21:30</span><span class="activity">Social</span></div>
+    <div class="block bg-lila r-social" style="grid-column:5"><span class="time">21:30</span><span class="activity">Social</span></div>
+    <div class="block bg-lila r-social" style="grid-column:6"><span class="time">21:30</span><span class="activity">Social</span></div>
+    <div class="block bg-lila r-social" style="grid-column:7"><span class="time">21:30</span><span class="activity">Social</span></div>
+    <div class="block bg-lila r-social" style="grid-column:9"><span class="time">21:30</span><span class="activity">Final Party!</span></div>
+  </div>
+
+  <div class="footer-notes">
+    <strong>Availability:</strong> During breaks, the fields and equipment are available for individual training/pick up.<br>
+    <strong>Disclaimer:</strong> This is an example schedule and may be subject to change.
+  </div>
+</div>
+
+<!-- ===== COACH ASSIGNMENT ===== -->
+<div class="section-divider"><h2>Coach → Group Assignment</h2></div>
+
+<div class="toolbar">
+  <button onclick="saveAll()">Save</button>
+  <button onclick="exportAll()">Export JSON</button>
+  <button onclick="resetAll()">Reset to Default</button>
+</div>
+<div class="coach-board" id="board"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ===== TRAINING TOPICS ===== -->
+<div class="section-divider"><h2>Training Topics per Session</h2></div>
+
+<div class="topics-board" id="topics-board"></div>
+
+<script>
+// ===== COACHES — hardcoded from meeting =====
+const coaches = [
+  { name: "Lina", group: 0 },
+  { name: "Paq", group: 1 },
+  { name: "Pascal", group: 2 },
+  { name: "Umut", group: 3 },
+  { name: "Cedric", group: 4 },
+  { name: "Jonas", group: 4 },
+];
+
+const columns = [
+  { id: 0, label: "Coaches", sidebar: true },
+  { id: 1, label: "Group 1" },
+  { id: 2, label: "Group 2" },
+  { id: 3, label: "Group 3" },
+  { id: 4, label: "Group 4" },
+];
+
+function updateCounts() {
+  columns.forEach(col => {
+    const count = document.querySelectorAll(`#col-${col.id} .coach-col-cards .coach-card`).length;
+    const el = document.getElementById(`count-${col.id}`);
+    el.textContent = col.sidebar ? `${count} available` : `${count} coach${count !== 1 ? 'es' : ''}`;
+  });
+}
+
+function getDragAfter(container, y) {
+  const els = [...container.querySelectorAll(".coach-card:not(.dragging)")];
+  return els.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) return { offset, element: child };
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2000);
+}
+
+const board = document.getElementById("board");
+
+columns.forEach(col => {
+  const column = document.createElement("div");
+  column.className = `coach-col${col.sidebar ? ' unassigned' : ''}`;
+  column.id = `col-${col.id}`;
+  column.innerHTML = `<div class="coach-col-header">${col.label}</div><div class="coach-col-count" id="count-${col.id}"></div>`;
+  const cardsDiv = document.createElement("div");
+  cardsDiv.className = "coach-col-cards";
+  cardsDiv.addEventListener("dragover", e => {
+    e.preventDefault();
+    column.classList.add("drag-over");
+    const dragging = document.querySelector(".coach-card.dragging");
+    if (!dragging) return;
+    const after = getDragAfter(cardsDiv, e.clientY);
+    after ? cardsDiv.insertBefore(dragging, after) : cardsDiv.appendChild(dragging);
+  });
+  cardsDiv.addEventListener("dragleave", () => column.classList.remove("drag-over"));
+  cardsDiv.addEventListener("drop", e => { e.preventDefault(); column.classList.remove("drag-over"); updateCounts(); });
+  column.appendChild(cardsDiv);
+  if (!col.sidebar) {
+    const notes = document.createElement("textarea");
+    notes.className = "coach-notes";
+    notes.placeholder = "Notes...";
+    notes.id = `cnotes-${col.id}`;
+    column.appendChild(notes);
+  }
+  board.appendChild(column);
+});
+
+coaches.forEach((c, i) => {
+  const card = document.createElement("div");
+  card.className = "coach-card";
+  card.draggable = true;
+  card.dataset.idx = i;
+  card.textContent = c.name;
+  card.addEventListener("dragstart", () => card.classList.add("dragging"));
+  card.addEventListener("dragend", () => { card.classList.remove("dragging"); updateCounts(); });
+  document.querySelector(`#col-${c.group} .coach-col-cards`).appendChild(card);
+});
+updateCounts();
+
+// ===== TRAINING TOPICS — hardcoded from meeting =====
+const topicDefs = [
+  { name: "Setting", cls: "t-setting" },
+  { name: "Defense", cls: "t-defense" },
+  { name: "Hitting", cls: "t-hitting" },
+  { name: "Serving", cls: "t-serving" },
+  { name: "Serve Receive", cls: "t-serve-receive" },
+];
+
+const sessions = [
+  { id: "mon-pm", label: "Mon 9", sub: "14:30–16:30" },
+  { id: "tue-am", label: "Tue 10", sub: "09:30–12:30" },
+  { id: "tue-pm", label: "Tue 10", sub: "14:30–16:30 Clinic" },
+  { id: "wed-am", label: "Wed 11", sub: "09:30–12:30" },
+  { id: "thu-am", label: "Thu 12", sub: "09:30–12:30" },
+  { id: "thu-pm", label: "Thu 12", sub: "14:30–16:30 Clinic" },
+  { id: "fri-am", label: "Fri 13", sub: "09:30–12:30" },
+];
+
+// Pre-assigned topics from meeting
+const preAssigned = {
+  "mon-pm": [{ name: "Setting", cls: "t-setting" }, { name: "Social Play", cls: "t-custom" }],
+  "tue-am": [{ name: "Serving", cls: "t-serving" }, { name: "Serve Receive", cls: "t-serve-receive" }],
+  "tue-pm": [{ name: "Hitting", cls: "t-hitting" }, { name: "Serving", cls: "t-serving" }],
+  "wed-am": [{ name: "Hitting", cls: "t-hitting" }, { name: "Setting", cls: "t-setting" }],
+  "thu-am": [{ name: "Defense", cls: "t-defense" }],
+  "thu-pm": [{ name: "Hitting", cls: "t-hitting" }, { name: "Serving", cls: "t-serving" }],
+  "fri-am": [{ name: "Setting", cls: "t-setting" }],
+};
+
+// Leftover pool chips
+const poolTopics = [
+  { name: "Defense", cls: "t-defense" },
+  { name: "Defense", cls: "t-defense" },
+  { name: "Serve Receive", cls: "t-serve-receive" },
+  { name: "Serve Receive", cls: "t-serve-receive" },
+];
+
+const tBoard = document.getElementById("topics-board");
+
+function getDragAfterTopic(container, y) {
+  const els = [...container.querySelectorAll(".topic-chip:not(.dragging)")];
+  return els.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) return { offset, element: child };
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function createTopicChip(name, cls, container) {
+  const chip = document.createElement("div");
+  chip.className = `topic-chip ${cls}`;
+  chip.draggable = true;
+  chip.textContent = name;
+  chip.addEventListener("dragstart", () => chip.classList.add("dragging"));
+  chip.addEventListener("dragend", () => chip.classList.remove("dragging"));
+  container.appendChild(chip);
+}
+
+function makeDroppable(container) {
+  container.addEventListener("dragover", e => {
+    e.preventDefault();
+    container.parentElement.classList.add("drag-over");
+    const dragging = document.querySelector(".topic-chip.dragging");
+    if (!dragging) return;
+    const after = getDragAfterTopic(container, e.clientY);
+    after ? container.insertBefore(dragging, after) : container.appendChild(dragging);
+  });
+  container.addEventListener("dragleave", () => container.parentElement.classList.remove("drag-over"));
+  container.addEventListener("drop", e => { e.preventDefault(); container.parentElement.classList.remove("drag-over"); });
+}
+
+// Pool column
+const pool = document.createElement("div");
+pool.className = "topic-slot pool";
+pool.id = "topic-pool";
+pool.innerHTML = '<div class="topic-slot-header">Topics</div><div class="topic-slot-sub">drag to sessions</div>';
+const poolCards = document.createElement("div");
+poolCards.className = "topic-slot-cards";
+pool.appendChild(poolCards);
+makeDroppable(poolCards);
+
+const addWrap = document.createElement("div");
+addWrap.style.cssText = "margin-top:auto;padding-top:8px;";
+addWrap.innerHTML = '<input type="text" placeholder="+ Add topic" style="width:100%;padding:5px 8px;border:1px solid #ccc;border-radius:5px;font-size:0.7rem;font-family:inherit;">';
+addWrap.querySelector("input").addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target.value.trim()) {
+    createTopicChip(e.target.value.trim(), "t-custom", poolCards);
+    e.target.value = "";
+  }
+});
+pool.appendChild(addWrap);
+tBoard.appendChild(pool);
+
+// Pool chips
+poolTopics.forEach(t => createTopicChip(t.name, t.cls, poolCards));
+
+// Session columns with pre-assigned topics
+sessions.forEach(s => {
+  const slot = document.createElement("div");
+  slot.className = "topic-slot";
+  slot.id = `session-${s.id}`;
+  slot.innerHTML = `<div class="topic-slot-header">${s.label}</div><div class="topic-slot-sub">${s.sub}</div>`;
+  const cards = document.createElement("div");
+  cards.className = "topic-slot-cards";
+  makeDroppable(cards);
+  slot.appendChild(cards);
+  tBoard.appendChild(slot);
+  // Place pre-assigned topics
+  if (preAssigned[s.id]) {
+    preAssigned[s.id].forEach(t => createTopicChip(t.name, t.cls, cards));
+  }
+});
+
+// ===== SAVE / EXPORT =====
+function getFullState() {
+  const state = { coaches: {}, coachNotes: {}, topics: {} };
+  columns.forEach(col => {
+    const cards = document.querySelectorAll(`#col-${col.id} .coach-col-cards .coach-card`);
+    state.coaches[col.label] = [...cards].map(c => c.textContent);
+    const n = document.getElementById(`cnotes-${col.id}`);
+    if (n && n.value) state.coachNotes[col.label] = n.value;
+  });
+  sessions.forEach(s => {
+    const chips = document.querySelectorAll(`#session-${s.id} .topic-slot-cards .topic-chip`);
+    state.topics[`${s.label} (${s.sub})`] = [...chips].map(c => c.textContent);
+  });
+  const poolChips = document.querySelectorAll("#topic-pool .topic-slot-cards .topic-chip");
+  state.topics["Pool"] = [...poolChips].map(c => c.textContent);
+  return state;
+}
+
+function saveAll() {
+  localStorage.setItem("fresh26-coaches", JSON.stringify(getFullState()));
+  showToast("Saved!");
+}
+
+function exportAll() {
+  navigator.clipboard.writeText(JSON.stringify(getFullState(), null, 2));
+  showToast("Copied to clipboard!");
+}
+
+function resetAll() {
+  localStorage.removeItem("fresh26-coaches");
+  location.reload();
+}
+</script>
+
+</body>
+</html>
