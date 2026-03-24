@@ -58,7 +58,10 @@
     position:relative;
     width:100%;
     height:100%;
-    transform-style:preserve-3d;
+    /* No preserve-3d: use flat z-index stacking instead.
+       The perspective on the parent stage still renders the visual 3D effect.
+       preserve-3d caused revealed cards' inner elements to bleed through
+       adjacent cards regardless of z-index rules. */
   }
   /* mini-card is now positioned absolutely inside the track */
   .mini-card{
@@ -125,6 +128,7 @@
   .mini-number{display:none}
   .mini-question{display:none}
   @keyframes mp{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.5;transform:scale(1.05)}}
+  .mini-country{font-family:'Orbitron',monospace;font-size:7px;letter-spacing:2px;color:#00b4ff;margin-top:6px;z-index:2;opacity:0.8}
   .mini-label{font-family:'Orbitron',monospace;font-size:6px;letter-spacing:3px;color:#fff;margin-top:8px;z-index:2}
   .mini-badge{position:absolute;top:10px;left:10px;font-family:'Orbitron',monospace;font-size:5px;font-weight:700;letter-spacing:2px;color:#888;border:1px solid #444;padding:3px 6px;border-radius:2px;z-index:2}
   .mini-spike-icon{width:100px;height:100px;opacity:0.85;z-index:2;margin-bottom:0;animation:sf 4s ease-in-out infinite;filter:invert(1)}
@@ -135,7 +139,7 @@
   .mini-thumb-name{position:absolute;bottom:10px;left:12px;z-index:3;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fff;letter-spacing:2px;text-shadow:0 2px 10px rgba(0,0,0,0.8)}
   .mini-thumb-flag{position:absolute;top:10px;right:10px;font-size:16px;z-index:3}
   .revealed-mini .mini-thumb{display:block}
-  .revealed-mini .mini-pattern,.revealed-mini .mini-question,.revealed-mini .mini-label,.revealed-mini .mini-badge,.revealed-mini .mini-number,.revealed-mini .mini-spike-icon{display:none}
+  .revealed-mini .mini-pattern,.revealed-mini .mini-question,.revealed-mini .mini-label,.revealed-mini .mini-badge,.revealed-mini .mini-number,.revealed-mini .mini-spike-icon,.revealed-mini .mini-country{display:none}
   .mini-card.reveal-anim{animation:mrp .6s cubic-bezier(0.16,1,0.3,1) forwards}
   @keyframes mrp{0%{transform:scale(1)}30%{transform:scale(1.08)}100%{transform:scale(1)}}
 
@@ -187,6 +191,23 @@
     width:8px;height:8px;
     box-shadow:0 0 8px rgba(0,180,255,0.6);
   }
+  .cf-unveil{
+    font-family:'Orbitron',monospace;
+    font-size:7px;
+    letter-spacing:3px;
+    color:#ffaa00;
+    background:rgba(255,170,0,0.06);
+    border:1px solid rgba(255,170,0,0.25);
+    padding:6px 14px;
+    border-radius:3px;
+    cursor:pointer;
+    transition:all .2s;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+    margin-top:12px;
+  }
+  .cf-unveil:hover{background:rgba(255,170,0,0.12);border-color:rgba(255,170,0,0.5);color:#fff}
+  .cf-unveil.active{color:#00b4ff;border-color:rgba(0,180,255,0.4);background:rgba(0,180,255,0.06)}
 
   /* Overlay, big card, etc — unchanged */
   .overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;align-items:center;justify-content:center;background:rgba(0,0,0,0);transition:background .4s}
@@ -335,6 +356,7 @@
       <span class="cf-counter" id="cfCounter">1 / 22</span>
       <button class="cf-arrow" id="cfNext" aria-label="Next">&#8594;</button>
     </div>
+    <button class="cf-unveil" id="cfUnveil">UNVEIL ALL</button>
   </div>
   <div class="side-logo right desktop"><img src="images/spikeball_text.png" alt="Spikeball"></div>
 </div>
@@ -482,13 +504,13 @@
 
   // Layout constants
   const CARD_W = 180;
-  const CARD_SPACING = 130; // horizontal spacing between card centers
-  const SIDE_ROTATE_Y = 48; // degrees
-  const SIDE_TRANSLATE_Z = -120; // px
-  const SIDE_SCALE = 0.78;
-  const FAR_OPACITY = 0.28;
-  const ADJ_OPACITY = 0.62;
-  const VISIBLE_EACH_SIDE = 2; // cards visible on each side of center
+  const CARD_SPACING = 100; // tighter spacing to fit more cards
+  const SIDE_ROTATE_Y = 45; // degrees
+  const SIDE_TRANSLATE_Z = -100; // px
+  const SIDE_SCALE = 0.72;
+  const FAR_OPACITY = 0.45;
+  const ADJ_OPACITY = 0.75;
+  const VISIBLE_EACH_SIDE = 5; // cards visible on each side of center
 
   const track = document.getElementById('cfTrack');
   const cardEls = [];
@@ -502,7 +524,7 @@
       <div class="mini-pattern"></div>
       <div class="mini-badge">FRESH 26</div>
       <img class="mini-spike-icon" src="${SPIKE_ICON}" alt="">
-      <div class="mini-question">?</div>
+      <div class="mini-country">${p.flag} ${p.country}</div>
       <div class="mini-label">${p.revealed ? 'TAP TO REVEAL' : 'COMING SOON'}</div>
       <div class="mini-number">#${p.id.toString().padStart(2,'0')}</div>
       <div class="mini-thumb">
@@ -545,11 +567,12 @@
       // Strip old position class, preserve data classes
       CF_POS_CLASSES.forEach(c => card.classList.remove(c));
 
-      // Cards beyond visible range: push off-screen and hide
+      // Cards beyond visible range: hide
       if (absOffset > VISIBLE_EACH_SIDE + 1) {
-        card.style.transform = `translateX(${offset * CARD_SPACING}px) translateZ(${SIDE_TRANSLATE_Z - 60}px) rotateY(${offset > 0 ? SIDE_ROTATE_Y : -SIDE_ROTATE_Y}deg) scale(${SIDE_SCALE * 0.7})`;
+        card.style.transform = `translateX(${offset * CARD_SPACING}px) translateZ(-200px) rotateY(${offset > 0 ? 55 : -55}deg) scale(0.4)`;
         card.style.opacity = '0';
         card.style.pointerEvents = 'none';
+        card.style.zIndex = '1';
         card.classList.add('is-hidden');
         return;
       }
@@ -560,21 +583,20 @@
       let opacity = 1;
 
       if (offset === 0) {
-        // CENTER — face-forward, full size, blue glow
         card.classList.add('is-center');
       } else if (absOffset === 1) {
-        // ADJACENT — angled and receding
         rotateY = offset > 0 ? SIDE_ROTATE_Y : -SIDE_ROTATE_Y;
         translateZ = SIDE_TRANSLATE_Z;
         scale = SIDE_SCALE;
         opacity = ADJ_OPACITY;
         card.classList.add('is-adjacent');
       } else {
-        // FAR — more angle, more depth, faded
-        rotateY = offset > 0 ? SIDE_ROTATE_Y + 8 : -(SIDE_ROTATE_Y + 8);
-        translateZ = SIDE_TRANSLATE_Z - 50;
-        scale = SIDE_SCALE * 0.82;
-        opacity = FAR_OPACITY;
+        // Gradual falloff for positions 2-5
+        const depth = Math.min(absOffset - 1, 4); // 0-4 range
+        rotateY = (SIDE_ROTATE_Y + depth * 2) * (offset > 0 ? 1 : -1);
+        translateZ = SIDE_TRANSLATE_Z - depth * 20;
+        scale = SIDE_SCALE - depth * 0.04;
+        opacity = Math.max(0.2, ADJ_OPACITY - depth * 0.12);
         card.classList.add('is-far');
       }
 
@@ -583,6 +605,10 @@
       card.style.transform = `translateX(${offset * CARD_SPACING}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
       card.style.opacity = String(opacity);
       card.style.pointerEvents = absOffset > VISIBLE_EACH_SIDE ? 'none' : 'auto';
+      // Explicit z-index: center on top, progressively lower for cards further away.
+      // This ensures the center card is always painted over adjacent cards regardless
+      // of DOM order or 3D transform state.
+      card.style.zIndex = String(Math.max(1, 30 - absOffset * 5));
     });
 
     cfUpdateDots();
@@ -619,50 +645,159 @@
   document.getElementById('cfPrev').addEventListener('click', () => cfNavigate(-1));
   document.getElementById('cfNext').addEventListener('click', () => cfNavigate(1));
 
-  // Touch/swipe
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchMoved = false;
+  // ─── FLUID SLIDE (touch + mouse drag) ───
   const stage = document.getElementById('cfStage');
+  let dragActive = false;
+  let dragStartX = 0;
+  let dragOffset = 0;      // fractional card offset during drag
+  let dragLastX = 0;
+  let dragVelocity = 0;
+  let dragLastTime = 0;
+  let dragIsTouch = false;
 
+  function dragStart(x, isTouch) {
+    dragActive = true;
+    dragStartX = x;
+    dragLastX = x;
+    dragOffset = 0;
+    dragVelocity = 0;
+    dragLastTime = Date.now();
+    dragIsTouch = isTouch;
+    // Disable smooth transitions during drag
+    cardEls.forEach(c => c.style.transition = 'none');
+  }
+
+  function dragMove(x) {
+    if (!dragActive) return;
+    const now = Date.now();
+    const dt = now - dragLastTime;
+    if (dt > 0) dragVelocity = (x - dragLastX) / dt;
+    dragLastX = x;
+    dragLastTime = now;
+    dragOffset = -(x - dragStartX) / CARD_SPACING;
+    cfLayoutWithOffset(dragOffset);
+  }
+
+  function dragEnd() {
+    if (!dragActive) return;
+    dragActive = false;
+    // Restore transitions
+    cardEls.forEach(c => c.style.transition = '');
+    // Snap: use velocity for momentum
+    let targetIndex = cfIndex + dragOffset;
+    // Add momentum: velocity in cards/ms * 150ms lookahead
+    targetIndex += (-dragVelocity * 150) / CARD_SPACING;
+    targetIndex = Math.round(targetIndex);
+    targetIndex = Math.max(0, Math.min(TOTAL - 1, targetIndex));
+    cfIndex = targetIndex;
+    cfLayout();
+  }
+
+  function cfLayoutWithOffset(fractionalOffset) {
+    const virtualCenter = cfIndex + fractionalOffset;
+    cardEls.forEach((card, i) => {
+      const offset = i - virtualCenter;
+      const absOffset = Math.abs(offset);
+      CF_POS_CLASSES.forEach(c => card.classList.remove(c));
+
+
+      if (absOffset > VISIBLE_EACH_SIDE + 2) {
+        card.style.transform = `translateX(${offset * CARD_SPACING}px) translateZ(-200px) rotateY(${offset > 0 ? 55 : -55}deg) scale(0.4)`;
+        card.style.opacity = '0';
+        card.style.pointerEvents = 'none';
+        card.style.zIndex = '1';
+        return;
+      }
+
+      let rotateY, translateZ, scale, opacity;
+      if (absOffset < 0.1) {
+        rotateY = 0; translateZ = 0; scale = 1; opacity = 1;
+      } else if (absOffset <= 1) {
+        const t = absOffset;
+        rotateY = t * SIDE_ROTATE_Y * (offset > 0 ? 1 : -1);
+        translateZ = t * SIDE_TRANSLATE_Z;
+        scale = 1 - t * (1 - SIDE_SCALE);
+        opacity = 1 - t * (1 - ADJ_OPACITY);
+      } else {
+        const depth = Math.min(absOffset - 1, 5);
+        rotateY = (SIDE_ROTATE_Y + depth * 2) * (offset > 0 ? 1 : -1);
+        translateZ = SIDE_TRANSLATE_Z - depth * 20;
+        scale = Math.max(0.5, SIDE_SCALE - depth * 0.04);
+        opacity = Math.max(0.15, ADJ_OPACITY - depth * 0.12);
+      }
+
+      card.style.transform = `translateX(${offset * CARD_SPACING}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
+      card.style.opacity = String(opacity);
+      card.style.pointerEvents = absOffset < 2.5 ? 'auto' : 'none';
+      // Explicit z-index during drag: whichever card is closest to center gets highest z.
+      card.style.zIndex = String(Math.max(1, 30 - Math.round(absOffset) * 5));
+    });
+  }
+
+  // Touch events
   stage.addEventListener('touchstart', e => {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-    touchMoved = false;
+    dragStart(e.touches[0].clientX, true);
   }, {passive: true});
 
   stage.addEventListener('touchmove', e => {
-    const dx = Math.abs(e.touches[0].clientX - touchStartX);
-    const dy = Math.abs(e.touches[0].clientY - touchStartY);
-    if (dx > 8 || dy > 8) touchMoved = true;
-    // Prevent page scroll when swiping horizontally
-    if (dx > dy) e.preventDefault();
+    if (!dragActive) return;
+    const dx = Math.abs(e.touches[0].clientX - dragStartX);
+    const dy = Math.abs(e.touches[0].clientY - (dragStartX)); // approximate
+    if (dx > 8) e.preventDefault();
+    dragMove(e.touches[0].clientX);
   }, {passive: false});
 
   stage.addEventListener('touchend', e => {
-    if (!touchMoved) return; // let click handler fire
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
-    if (Math.abs(dx) > 40 && Math.abs(dx) > dy) {
-      cfNavigate(dx < 0 ? 1 : -1);
+    if (Math.abs(dragOffset) < 0.15) {
+      // Tiny drag = treat as tap, let click handler deal with it
+      dragActive = false;
+      cardEls.forEach(c => c.style.transition = '');
+      return;
     }
+    dragEnd();
   }, {passive: true});
 
-  // Drag support (mouse)
-  let dragStartX = 0;
-  let dragMoved = false;
+  // Mouse events
   stage.addEventListener('mousedown', e => {
-    dragStartX = e.clientX;
-    dragMoved = false;
+    e.preventDefault();
+    dragStart(e.clientX, false);
   });
+
   window.addEventListener('mousemove', e => {
-    if (Math.abs(e.clientX - dragStartX) > 5) dragMoved = true;
+    if (!dragActive || dragIsTouch) return;
+    dragMove(e.clientX);
   });
-  stage.addEventListener('mouseup', e => {
-    if (!dragMoved) return;
-    const dx = e.clientX - dragStartX;
-    if (Math.abs(dx) > 50) cfNavigate(dx < 0 ? 1 : -1);
-    dragMoved = false;
+
+  window.addEventListener('mouseup', e => {
+    if (!dragActive || dragIsTouch) return;
+    if (Math.abs(dragOffset) < 0.15) {
+      dragActive = false;
+      cardEls.forEach(c => c.style.transition = '');
+      return;
+    }
+    dragEnd();
+  });
+
+  // Unveil All toggle
+  let allUnveiled = false;
+  document.getElementById('cfUnveil').addEventListener('click', () => {
+    allUnveiled = !allUnveiled;
+    const btn = document.getElementById('cfUnveil');
+    if (allUnveiled) {
+      btn.textContent = 'HIDE ALL';
+      btn.classList.add('active');
+      cardEls.forEach((card, i) => {
+        card.classList.add('revealed-mini');
+        flippedThisSession.add(PLAYERS[i].id);
+      });
+    } else {
+      btn.textContent = 'UNVEIL ALL';
+      btn.classList.remove('active');
+      cardEls.forEach((card, i) => {
+        card.classList.remove('revealed-mini');
+        flippedThisSession.delete(PLAYERS[i].id);
+      });
+    }
   });
 
   // Init
